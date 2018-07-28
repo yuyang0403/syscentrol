@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: gateway-zuul
+server: 
+  port: 3333
+eureka: 
+  client: 
+    service-url: 
+      defaultZone: http://localhost:1111/eureka
+  instance:
+    instance-id: ${spring.application.name}:${server.port}
+    prefer-ip-address: true
+#http://localhost:10100/user-manager/user/manager/getUserById/1
+zuul:
+  routes: 
+    user-manager:
+      path: /user-manager/**
+      serviceId: micservice-user
+    user-api:
+      path: /user-api/**
+      serviceId: micservice-user
+    sys-user:
+      path: /user-login/**
+      serviceId: micservice-user
+  sensitive-headers:
+#logging.level.ROOT: DEBUG

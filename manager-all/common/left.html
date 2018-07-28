@@ -1,0 +1,23 @@
+<ul id="leftMenu"></ul>
+<script>
+    var userid=$.cookie('userid');
+    var token=$.cookie('token');
+    $("#leftMenu").tree({
+        url: 'http://localhost:3333/user-manager/user/manager/getMenuList/' + userid+"?token="+token,
+        onClick: function (node) {
+            if (node.url != undefined) {
+                if ($('#centerPanel').tabs('exists', node.text)) {
+                    $('#centerPanel').tabs('select', node.text);
+                    $('#centerPanel').tabs('getTab', node.text).panel('refresh', node.href);
+                } else {
+                    $("#centerPanel").tabs('add', {
+                        title: node.text,
+                        href: node.url,
+                        closable: true,
+                        iconCls: node.iconCls
+                    });
+                }
+            }
+        }
+    });
+</script>

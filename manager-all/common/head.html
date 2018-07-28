@@ -1,0 +1,46 @@
+<style>
+    #headContent{
+        width:100%;
+        height: 100%;
+        background-color: #6699ff;
+    }
+    #headContent #logoutdiv{
+        position: absolute;
+        right:10px;
+        bottom:10px;
+    }
+    #headContent #logoutdiv a{
+        text-decoration: none;
+        color:black;
+
+
+    }
+</style>
+<div id="headContent">
+    <div id="logoutdiv">
+        <a href="javascript:;" onclick="logout()">退出登录</a>
+    </div>
+</div>
+<script>
+    function logout(){
+        $.messager.confirm('你确定？','确定要退出登陆么？',function(btn){
+            if(btn){
+                $.ajax({
+                    type:'post',
+                    url: 'http://localhost:3333/user-login/login/logout',
+                    data: {token:$.cookie('token')},
+                    success:function(){
+                        location.reload();
+                    },
+                    error:function(){
+                        location.reload();
+                    },
+                    xhrFields: {
+                        withCredentials: true
+                    }
+                });
+            }
+        });
+
+    }
+</script>

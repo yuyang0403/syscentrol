@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: micservice-user
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://192.168.198.129:3306/syscentrol?useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: root
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${server.port}
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://localhost:1111/eureka
+server:
+  port: 10101
+#jdbc configuration
+mybatis:
+  typeAliasesPackage: com.yuyang.user.model
+  mapperLocations: classpath:com.yuyang.user.mapper/*.xml
+#logging.level.ROOT: DEBUG
+#打印mybatis sql
+logging:
+  level:
+    com.yuyang.user.mapper: trace
