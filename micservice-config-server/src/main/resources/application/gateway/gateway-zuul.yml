@@ -1,0 +1,13 @@
+zuul:
+  routes:
+    user-manager:
+      path: /user-manager/**
+      serviceId: micservice-user
+    user-api:
+      path: /user-api/**
+      serviceId: micservice-user
+    sys-user:
+      path: /user-login/**
+      serviceId: micservice-user
+  sensitive-headers:
+#logging.level.ROOT: DEBUG

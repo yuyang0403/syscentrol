@@ -1,0 +1,16 @@
+spring: 
+  application: 
+    name: config-server
+  profiles:
+    active: native
+  cloud: 
+    config: 
+      server: 
+        native:
+          searchLocations: classpath:/jdbc/,classpath:/application/
+eureka: 
+  client: 
+    serviceUrl: 
+      defaultZone: http://localhost:1111/eureka/
+  instance: 
+    prefer-ip-address: true

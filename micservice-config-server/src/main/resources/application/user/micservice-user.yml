@@ -1,0 +1,9 @@
+#mybatis mapping
+mybatis:
+  typeAliasesPackage: com.yuyang.user.model
+  mapperLocations: classpath:com.yuyang.user.mapper/*.xml
+#logging.level.ROOT: DEBUG
+#print mybatis sql
+logging:
+  level:
+    com.yuyang.user.mapper: trace

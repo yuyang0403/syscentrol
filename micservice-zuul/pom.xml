@@ -36,14 +36,18 @@
             <version>0.6.0</version>
         </dependency>
         <dependency>
-            <groupId>com.github.pagehelper</groupId>
-            <artifactId>pagehelper-spring-boot-starter</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
             <groupId>com.yuyang</groupId>
             <artifactId>common-parent</artifactId>
             <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-hystrix</artifactId>
+            <version>1.4.0.RELEASE</version>
         </dependency>
     </dependencies>
 
