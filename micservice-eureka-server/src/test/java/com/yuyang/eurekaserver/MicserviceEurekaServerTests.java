@@ -1,4 +1,4 @@
-package com.yuyang.config;
+package com.yuyang.eurekaserver;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,7 +7,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class MicserviceConfigServerApplicationTests {
+public class MicserviceEurekaServerTests {
 
     @Test
     public void contextLoads() {

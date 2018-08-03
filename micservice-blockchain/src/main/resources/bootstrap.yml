@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: micservice-blockchain
+  profiles:
+    active: dev
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: config-server
+      label: blockchain
+server:
+  port: 4444
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${server.port}
+    prefer-ip-address: true

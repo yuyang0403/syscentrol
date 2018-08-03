@@ -10,8 +10,8 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 @EnableEurekaClient
 @SpringCloudApplication
 @MapperScan("com.yuyang.user.mapper")
-public class UserManagerApplication {
+public class MicserviceUser {
     public static void main(String[] args) {
-        SpringApplication.run(UserManagerApplication.class, args);
+        SpringApplication.run(MicserviceUser.class, args);
     }
 }

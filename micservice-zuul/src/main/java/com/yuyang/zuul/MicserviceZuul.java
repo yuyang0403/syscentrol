@@ -10,10 +10,10 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 @EnableZuulProxy
 @SpringCloudApplication
-public class MicserviceZuulApplication {
+public class MicserviceZuul {
 
     public static void main(String[] args) {
-        SpringApplication.run(MicserviceZuulApplication.class, args);
+        SpringApplication.run(MicserviceZuul.class, args);
     }
 
     @Bean
