@@ -24,6 +24,7 @@ public class SysUserServiceImpl implements SysUserService {
     Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
     @Autowired
     SysUserMapper sysUserMapper;
+
     @Override
     public SysUser selectSysUserById(Long id) {
         return sysUserMapper.selectByPrimaryKey(id);
@@ -31,6 +32,7 @@ public class SysUserServiceImpl implements SysUserService {
 
     /**
      * 登录用
+     *
      * @param user
      * @return
      */
@@ -41,20 +43,21 @@ public class SysUserServiceImpl implements SysUserService {
 
     /**
      * 获取菜单
+     *
      * @param userid
      * @return
      */
     @Override
     public String selectMenuListByUserId(Long userid) {
-        List<SysMenu> menuList=sysUserMapper.selectMenuListByUserId(userid);
+        List<SysMenu> menuList = sysUserMapper.selectMenuListByUserId(userid);
         //最上级菜单
-        JsonArray parentTree=new JsonArray();
+        JsonArray parentTree = new JsonArray();
         for (SysMenu menuEntity : menuList) {
-            if(menuEntity.getParentId()==0) {
+            if (menuEntity.getParentId() == 0) {
                 JsonObject menuJson = gson.toJsonTree(menuEntity).getAsJsonObject();
                 menuJson.addProperty("text", menuEntity.getTitle());
                 menuJson.addProperty("iconCls", menuEntity.getIcon());
-                menuJson.add("children",getChildren(menuList,menuEntity));
+                menuJson.add("children", getChildren(menuList, menuEntity));
                 parentTree.add(menuJson);
             }
         }
@@ -63,14 +66,15 @@ public class SysUserServiceImpl implements SysUserService {
 
     /**
      * 递归获取菜单
+     *
      * @param list
      * @param current
      * @return
      */
-    private JsonArray getChildren(List<SysMenu> list,SysMenu current){
-        JsonArray childrenArray=new JsonArray();
+    private JsonArray getChildren(List<SysMenu> list, SysMenu current) {
+        JsonArray childrenArray = new JsonArray();
         for (SysMenu menuEntity : list) {
-            if(menuEntity.getParentId().longValue()==current.getId().longValue()) {
+            if (menuEntity.getParentId().longValue() == current.getId().longValue()) {
                 JsonObject menuJson = gson.toJsonTree(menuEntity).getAsJsonObject();
                 menuJson.addProperty("text", menuEntity.getTitle());
                 menuJson.addProperty("iconCls", menuEntity.getIcon());
@@ -83,13 +87,14 @@ public class SysUserServiceImpl implements SysUserService {
 
     /**
      * 分页查询
+     *
      * @param user
      * @return
      */
     @Override
     public String selectByPage(SysUser user) {
-        PageHelper.startPage(user.getPage(),user.getRows());
-        List<SysUser> list=sysUserMapper.selectByPage(user);
+        PageHelper.startPage(user.getPage(), user.getRows());
+        List<SysUser> list = sysUserMapper.selectByPage(user);
         PageInfo pageInfo = new PageInfo(list);
         Page page = (Page) list;
         user.setPa(page);

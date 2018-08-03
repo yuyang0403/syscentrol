@@ -10,63 +10,63 @@
     <script type="text/javascript" src="jquery-easyui-1.5.5.2/jquery.easyui.min.js"></script>
     <script type="text/javascript" src="jquery-easyui-1.5.5.2/easyui-lang-zh_CN.js"></script>
     <script>
-        $(function(){
+        $(function () {
             //禁用鼠标右击事件
-            $(document).bind("contextmenu",function(e){
+            $(document).bind("contextmenu", function (e) {
 
                 return false;
             });
 
-            var token=$.cookie('token');
-            if(token==undefined){
+            var token = $.cookie('token');
+            if (token == undefined) {
                 //登录页渲染
                 $("#loginWindow").window({
-                    width:400,
-                    height:300,
-                    modal:true,
-                    title:'请先登录',
-                    collapsible:false,
-                    minimizable:false,
-                    maximizable:false,
-                    closable:false,
-                    draggable:false,
-                    resizable:false,
-                    href:'common/login.html'
+                    width: 400,
+                    height: 300,
+                    modal: true,
+                    title: '请先登录',
+                    collapsible: false,
+                    minimizable: false,
+                    maximizable: false,
+                    closable: false,
+                    draggable: false,
+                    resizable: false,
+                    href: 'common/login.html'
                 });
             }
             //全屏布局
             $(document.body).layout();
-            $(document.body).layout('add',{
-                region:'north',
-                title:'北',
-                height:'100px',
-                href:'common/head.html',
-                noheader:true
+            $(document.body).layout('add', {
+                region: 'north',
+                title: '北',
+                height: '100px',
+                href: 'common/head.html',
+                noheader: true
             });
-            $(document.body).layout('add',{
-                region:'south',
-                height:'50px',
-                href:'common/foot.html',
-                noheader:true
+            $(document.body).layout('add', {
+                region: 'south',
+                height: '50px',
+                href: 'common/foot.html',
+                noheader: true
             });
-            $(document.body).layout('add',{
-                region:'center',
-                title:'中',
-                href:'common/center.html',
-                noheader:true,
-                split:true
+            $(document.body).layout('add', {
+                region: 'center',
+                title: '中',
+                href: 'common/center.html',
+                noheader: true,
+                split: true
             });
-            $(document.body).layout('add',{
-                region:'west',
-                title:'菜单导航',
-                width:'200px',
-                href:'common/left.html',
-                split:true
+            $(document.body).layout('add', {
+                region: 'west',
+                title: '菜单导航',
+                width: '200px',
+                href: 'common/left.html',
+                split: true
             });
         });
     </script>
 </head>
 <body>
-    <div id="loginWindow" style="width:400px;padding:20px 70px 20px 70px;"></div>
+<div id="loginWindow" style="width:400px;padding:20px 70px 20px 70px;"></div>
 </body>
 </html>

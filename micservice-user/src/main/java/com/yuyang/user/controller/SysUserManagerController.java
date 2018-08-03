@@ -19,42 +19,45 @@ import javax.annotation.Resource;
 @RestController
 @RequestMapping("user/manager")
 public class SysUserManagerController {
-    Logger logger=LoggerFactory.getLogger(this.getClass());
+    Logger logger = LoggerFactory.getLogger(this.getClass());
     @Resource
     SysUserService sysUserService;
-    @RequestMapping(value="getUserById/{id}")
-    public SysUser getUserById(@PathVariable("id") Long id){
+
+    @RequestMapping(value = "getUserById/{id}")
+    public SysUser getUserById(@PathVariable("id") Long id) {
         return sysUserService.selectSysUserById(id);
     }
 
     /**
      * 获取菜单tree
+     *
      * @return
      */
-    @RequestMapping(value="getMenuList/{userid}")
+    @RequestMapping(value = "getMenuList/{userid}")
     @CrossOrigin(origins = "*")
-    public String getMenuList(@PathVariable("userid") Long userid){
-        String result=null;
+    public String getMenuList(@PathVariable("userid") Long userid) {
+        String result = null;
         try {
-            result=sysUserService.selectMenuListByUserId(userid);
+            result = sysUserService.selectMenuListByUserId(userid);
         } catch (Exception e) {
-            logger.error(e.getMessage(),e);
+            logger.error(e.getMessage(), e);
         }
         return result;
     }
 
     /**
      * 用户分页
+     *
      * @return
      */
-    @RequestMapping(value="getUserList")
+    @RequestMapping(value = "getUserList")
     @CrossOrigin(origins = "*")
-    public String getUserList(SysUser user){
-        String result=null;
+    public String getUserList(SysUser user) {
+        String result = null;
         try {
-            result=sysUserService.selectByPage(user);
+            result = sysUserService.selectByPage(user);
         } catch (Exception e) {
-            logger.error(e.getMessage(),e);
+            logger.error(e.getMessage(), e);
         }
         return result;
     }

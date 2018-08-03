@@ -1,9 +1,9 @@
 <ul id="leftMenu"></ul>
 <script>
-    var userid=$.cookie('userid');
-    var token=$.cookie('token');
+    var userid = $.cookie('userid');
+    var token = $.cookie('token');
     $("#leftMenu").tree({
-        url: 'http://localhost:3333/user-manager/user/manager/getMenuList/' + userid+"?token="+token,
+        url: 'http://localhost:3333/user-manager/user/manager/getMenuList/' + userid + "?token=" + token,
         onClick: function (node) {
             if (node.url != undefined) {
                 if ($('#centerPanel').tabs('exists', node.text)) {

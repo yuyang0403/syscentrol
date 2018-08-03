@@ -8,6 +8,7 @@ package com.yuyang.zuul.service;
 public interface TokenService {
     /**
      * 验证当前token是否有效
+     *
      * @param token
      * @return
      */

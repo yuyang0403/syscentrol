@@ -12,6 +12,7 @@ public interface SysUserService {
 
     /**
      * 登录用
+     *
      * @param user
      * @return
      */
@@ -19,6 +20,7 @@ public interface SysUserService {
 
     /**
      * 查询用户的菜单
+     *
      * @param userid
      * @return
      */
@@ -26,6 +28,7 @@ public interface SysUserService {
 
     /**
      * 分页查询
+     *
      * @param user
      * @return
      */

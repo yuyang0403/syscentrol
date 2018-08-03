@@ -15,16 +15,19 @@ public class MicserviceZuulApplication {
     public static void main(String[] args) {
         SpringApplication.run(MicserviceZuulApplication.class, args);
     }
+
     @Bean
-    public ErrorFilter getErrorFilter(){
+    public ErrorFilter getErrorFilter() {
         return new ErrorFilter();
     }
+
     @Bean
-    public PreError getPreError(){
+    public PreError getPreError() {
         return new PreError();
     }
+
     @Bean
-    public PostError getPostError(){
+    public PostError getPostError() {
         return new PostError();
     }
 }

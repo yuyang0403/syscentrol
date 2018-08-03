@@ -7,13 +7,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class FilterErrorController implements ErrorController {
 
-	@Override
-	public String getErrorPath() {
-		// TODO Auto-generated method stub
-		return "/error";
-	}
-	@RequestMapping("/error")  
-    public String error() {  
-        return "出现异常";  
-    }  
+    @Override
+    public String getErrorPath() {
+        // TODO Auto-generated method stub
+        return "/error";
+    }
+
+    @RequestMapping("/error")
+    public String error() {
+        return "出现异常";
+    }
 }

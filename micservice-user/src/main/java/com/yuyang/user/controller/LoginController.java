@@ -28,68 +28,70 @@ import java.util.Date;
  **/
 @RestController
 public class LoginController {
-    Logger logger=LoggerFactory.getLogger(this.getClass());
+    Logger logger = LoggerFactory.getLogger(this.getClass());
     @Resource
     SysUserService sysUserService;
-    @RequestMapping(value="login",method = RequestMethod.POST)
+
+    @RequestMapping(value = "login", method = RequestMethod.POST)
     @CrossOrigin(origins = "*")
-    public String login(SysUser user, HttpServletRequest request, HttpServletResponse response){
+    public String login(SysUser user, HttpServletRequest request, HttpServletResponse response) {
         //获取缓存单例
-        RedisCache redisCache= CacheManager.getSingletonCache();
-        JsonObject result=new JsonObject();
-        String userid="";
-        try{
-            SysUser loginUser=sysUserService.selectSysUserByNameAndPwd(user);
-            result.addProperty("error","0");
-            result.add("token",new Gson().toJsonTree(loginUser));
-            if(loginUser==null){
-                result.addProperty("error","1");
-                result.addProperty("message","登录失败，用户名或者密码有误！");
+        RedisCache redisCache = CacheManager.getSingletonCache();
+        JsonObject result = new JsonObject();
+        String userid = "";
+        try {
+            SysUser loginUser = sysUserService.selectSysUserByNameAndPwd(user);
+            result.addProperty("error", "0");
+            result.add("token", new Gson().toJsonTree(loginUser));
+            if (loginUser == null) {
+                result.addProperty("error", "1");
+                result.addProperty("message", "登录失败，用户名或者密码有误！");
                 logger.info(result.toString());
                 return result.toString();
             }
-            userid=loginUser.getId().toString();
+            userid = loginUser.getId().toString();
         } catch (Exception e) {
-            result.addProperty("error","1");
-            result.addProperty("message",e.getMessage());
-            logger.error(result.toString(),e);
+            result.addProperty("error", "1");
+            result.addProperty("message", e.getMessage());
+            logger.error(result.toString(), e);
             return result.toString();
         }
-        String jwtToken = Jwts.builder().setSubject(userid).setIssuedAt(new Date()).claim("userid",userid)
+        String jwtToken = Jwts.builder().setSubject(userid).setIssuedAt(new Date()).claim("userid", userid)
                 .signWith(SignatureAlgorithm.HS256, Constant.TOKEN_SECURE).compact();
-        result.addProperty("token",jwtToken);
-        result.addProperty("userid",userid);
-        redisCache.set(Constant.TOKEN_KEY+userid,jwtToken);
-        redisCache.setExpireTime(Constant.TOKEN_KEY+userid,20*60L);
+        result.addProperty("token", jwtToken);
+        result.addProperty("userid", userid);
+        redisCache.set(Constant.TOKEN_KEY + userid, jwtToken);
+        redisCache.setExpireTime(Constant.TOKEN_KEY + userid, 20 * 60L);
         //添加cookie
-        CookieUtil.addCookie(response,"userid",userid,Constant.DEFAULT_COOKIE_PATH,Constant.DEFAULT_COOKIE_MAX_AGE);
-        CookieUtil.addCookie(response,"token",jwtToken,Constant.DEFAULT_COOKIE_PATH,Constant.DEFAULT_COOKIE_MAX_AGE);
-        logger.info("用户"+userid+"登录成功！token:"+jwtToken);
+        CookieUtil.addCookie(response, "userid", userid, Constant.DEFAULT_COOKIE_PATH, Constant.DEFAULT_COOKIE_MAX_AGE);
+        CookieUtil.addCookie(response, "token", jwtToken, Constant.DEFAULT_COOKIE_PATH, Constant.DEFAULT_COOKIE_MAX_AGE);
+        logger.info("用户" + userid + "登录成功！token:" + jwtToken);
         return result.toString();
     }
 
     /**
      * 退出登录
+     *
      * @param token
      * @return
      */
     @CrossOrigin(origins = "*")
     @PostMapping("login/logout")
-    public void logout(@RequestParam("token") String token,HttpServletRequest request,HttpServletResponse response){
+    public void logout(@RequestParam("token") String token, HttpServletRequest request, HttpServletResponse response) {
         //获取缓存单例
-        RedisCache redisCache= CacheManager.getSingletonCache();
+        RedisCache redisCache = CacheManager.getSingletonCache();
         Claims claims = null;
-        String userid="";
+        String userid = "";
         try {
             claims = Jwts.parser().setSigningKey(Constant.TOKEN_SECURE).parseClaimsJws(token).getBody();
-            userid=claims.get("userid").toString();
+            userid = claims.get("userid").toString();
         } catch (Exception e) {
             //无需处理该异常
-        }finally{
-            redisCache.remove(Constant.TOKEN_KEY+userid);
+        } finally {
+            redisCache.remove(Constant.TOKEN_KEY + userid);
             //清除cookie
-            CookieUtil.delCookie(request,response,"token");
+            CookieUtil.delCookie(request, response, "token");
         }
-        logger.info("用户"+userid+"退出登录成功！token:"+token);
+        logger.info("用户" + userid + "退出登录成功！token:" + token);
     }
 }

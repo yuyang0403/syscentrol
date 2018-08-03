@@ -22,11 +22,13 @@ import java.util.regex.Pattern;
  * @create 2018/6/21 15:49
  * @desc
  **/
-public class RedisCacheImpl implements RedisCache<String,Object> {
+public class RedisCacheImpl implements RedisCache<String, Object> {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
-    public RedisCacheImpl(RedisTemplate redisTemplate){
-        this.redisTemplate=redisTemplate;
+
+    public RedisCacheImpl(RedisTemplate redisTemplate) {
+        this.redisTemplate = redisTemplate;
     }
+
     protected RedisTemplate redisTemplate;
     /**
      * 出异常，重复操作的次数
@@ -35,7 +37,7 @@ public class RedisCacheImpl implements RedisCache<String,Object> {
 
 
     public double getCreateTimeScore(long date) {
-        return date/ 100000.0;
+        return date / 100000.0;
     }
 
 
@@ -79,7 +81,7 @@ public class RedisCacheImpl implements RedisCache<String,Object> {
         while (iterator.hasNext()) {
             String k = iterator.next();
             if (getType(k) == DataType.ZSET) {
-                logger.debug("k:"+k);
+                logger.debug("k:" + k);
                 map.put(k, getZSetRange(k));
             }
         }
@@ -253,8 +255,8 @@ public class RedisCacheImpl implements RedisCache<String,Object> {
     }
 
 
-    public void setZSetUnionAndStore(String key,String key1, String key2) {
-        redisTemplate.boundZSetOps(key).unionAndStore(key1,key2);
+    public void setZSetUnionAndStore(String key, String key1, String key2) {
+        redisTemplate.boundZSetOps(key).unionAndStore(key1, key2);
     }
 
 
@@ -357,8 +359,8 @@ public class RedisCacheImpl implements RedisCache<String,Object> {
     }
 
 
-    public void removeZSetRangeByScore(String key,double s , double e) {
-        redisTemplate.boundZSetOps(key).removeRangeByScore(s,e);
+    public void removeZSetRangeByScore(String key, double s, double e) {
+        redisTemplate.boundZSetOps(key).removeRangeByScore(s, e);
     }
 
 
@@ -375,12 +377,15 @@ public class RedisCacheImpl implements RedisCache<String,Object> {
     public boolean exists(String key) {
         return redisTemplate.hasKey(key);
     }
+
     public Object get(int key) {
         return this.get(String.valueOf(key));
     }
+
     public Object get(long key) {
         return this.get(String.valueOf(key));
     }
+
     public Object get(String key) {
         return redisTemplate.boundValueOps(key).get();
     }
@@ -408,11 +413,13 @@ public class RedisCacheImpl implements RedisCache<String,Object> {
 
 
     public void set(long key, Object value) {
-        this.set(String.valueOf(key) ,value);
+        this.set(String.valueOf(key), value);
     }
+
     public void set(int key, Object value) {
-        this.set(String.valueOf(key) ,value);
+        this.set(String.valueOf(key), value);
     }
+
     public void set(String key, Object value) {
         redisTemplate.boundValueOps(key).set(value);
     }
@@ -428,11 +435,9 @@ public class RedisCacheImpl implements RedisCache<String,Object> {
     }
 
 
-
     public DataType getType(String key) {
         return redisTemplate.type(key);
     }
-
 
 
     public void removeMapField(String key, Object... field) {
@@ -516,8 +521,8 @@ public class RedisCacheImpl implements RedisCache<String,Object> {
 
     public Boolean hasSetValue(String key, Object obj) {
         Boolean boo = null;
-        int t =0;
-        while (true){
+        int t = 0;
+        while (true) {
             try {
                 boo = redisTemplate.boundSetOps(key).isMember(obj);
                 break;
@@ -525,7 +530,7 @@ public class RedisCacheImpl implements RedisCache<String,Object> {
                 logger.error("key[" + key + "],obj[" + obj + "]判断Set中的值是否存在失败,异常信息:" + e.getMessage());
                 t++;
             }
-            if(t>times){
+            if (t > times) {
                 break;
             }
         }

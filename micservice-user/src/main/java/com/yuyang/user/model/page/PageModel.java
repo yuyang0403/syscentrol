@@ -12,7 +12,7 @@ import com.google.gson.JsonObject;
  * @desc
  **/
 public class PageModel {
-    private int page=1;
+    private int page = 1;
     //总数
     private long total;
     //每页条数
@@ -34,7 +34,7 @@ public class PageModel {
     }
 
     public void setPageInfo(PageInfo pageInfo) {
-        this.total=pageInfo.getTotal();
+        this.total = pageInfo.getTotal();
         this.pageInfo = pageInfo;
     }
 
@@ -44,7 +44,7 @@ public class PageModel {
 
     public void setPa(Page pa) {
         this.pa = pa;
-        this.rowsDataInformation=(JsonArray)new Gson().toJsonTree(pa.getResult());
+        this.rowsDataInformation = (JsonArray) new Gson().toJsonTree(pa.getResult());
     }
 
     public int getPage() {
@@ -73,12 +73,13 @@ public class PageModel {
 
     /**
      * 获取json结果
+     *
      * @return
      */
-    public String getPageResult(){
-        JsonObject jo=new JsonObject();
-        jo.addProperty("total",this.getTotal());
-        jo.add("rows",this.getRowsDataInformation());
+    public String getPageResult() {
+        JsonObject jo = new JsonObject();
+        jo.addProperty("total", this.getTotal());
+        jo.add("rows", this.getRowsDataInformation());
         return jo.toString();
     }
 }
