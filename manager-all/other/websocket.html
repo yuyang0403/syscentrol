@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>websocket client</title>
+
+</head>
+<script src="../common/js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript">
+    var ws;
+    function openSession(){
+        ws = new WebSocket("ws://localhost:5555/smsServer");
+        ws.onopen = function(evn){
+            console.log(evn);
+        };
+        ws.onmessage = function(evn){
+            console.log(evn.data);
+            var tr='<tr><td>'+evn.data+'</td></tr>';
+            $("#messageList").append(tr);
+        };
+        ws.onclose = function(){
+            var tr='<tr><td>聊天已关闭</td></tr>';
+            $("#messageList").append(tr);
+        };
+
+    };
+    function sendMsg(){
+        var msg = document.getElementById("msg").value;
+        ws.send(msg);
+        document.getElementById("msg").value = "";
+    }
+</script>
+<body>
+<h2>Hello World!</h2>
+<div id="dv" />
+<input type="button" value="连接" onclick="openSession()" />
+<input type="text" id ="msg" /><input type="button" onclick="sendMsg()" value="发送" />
+<div id="messageBox">
+    <table id="messageList">
+
+    </table>
+</div>
+</body>
+</html>

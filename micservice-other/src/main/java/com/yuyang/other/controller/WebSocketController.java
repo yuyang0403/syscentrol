@@ -1,6 +1,7 @@
 package com.yuyang.other.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -9,8 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
  * @desc
  **/
 @RestController
-public class WebSocketController {
-    @RequestMapping(value="/test")
+public class WebSocketController{
+    @RequestMapping(value="/sendMsg",method = RequestMethod.POST,consumes = "application/json")
     public String test(){
         return "test success";
     }
