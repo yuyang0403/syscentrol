@@ -1,0 +1,17 @@
+server:
+  port: 5555
+spring:
+  application:
+    name: micservice-other
+  profiles:
+    active: dev
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: config-server
+      label: other
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${server.port}
+    prefer-ip-address: true
