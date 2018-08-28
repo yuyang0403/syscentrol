@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
  **/
 @RestController
 public class WebSocketController{
-    @RequestMapping(value="/sendMsg",method = RequestMethod.POST,consumes = "application/json")
+    @RequestMapping(value="/websocket/sendMsg",method = RequestMethod.POST,consumes = "application/json")
     public String test(){
         return "test success";
     }
