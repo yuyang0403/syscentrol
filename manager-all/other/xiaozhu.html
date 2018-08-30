@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    #messageBox{
+        width: 70%;
+        margin: 0px auto;
+    }
+    #messageBox div{
+        border: 1px rebeccapurple solid;
+        margin-top: 10px;
+    }
+</style>
+<script src="../common/js/jquery-1.8.3.min.js"></script>
+<script>
+    $(function(){
+        $.get('http://localhost:5555/pachong/xiaozhu',{},function(data){
+            for(var i=0;i<data.length;i++){
+                var cityDiv="<div>";
+                cityDiv+="<h1>";
+                var cityContent=[];
+                $.each(data[i], function(j) {
+                    cityDiv+=j;
+                    cityContent=data[i][j];
+                });
+                cityDiv+="</h1>";
+                console.log(cityContent);
+                //继续拼接
+                $.each(cityContent, function(j) {
+                    for(var k=0;k<cityContent.length;k++){
+                        cityDiv+="<div>";
+                        cityDiv+=cityContent[k].object;
+                        cityDiv+="</div>";
+                        console.log(cityContent[k]);
+                    }
+                });
+                cityDiv+="</div>";
+                $("#messageBox").append(cityDiv);
+            }
+        },'json');
+    });
+</script>
+<body>
+    <div id="messageBox">
+
+    </div>
+</body>
+</html>
