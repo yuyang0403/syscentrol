@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<script src="../common/js/jquery-1.8.3.min.js"></script>
+<script>
+    $(function(){
+        $.get('http://localhost:5555/pachong/test',{},function(data){
+            for(var i=0;i<data.length;i++){
+                var msgDiv="<div>";
+                msgDiv+=data[i].info;
+                msgDiv+="</div>";
+                $("#messageBox").append(msgDiv);
+            }
+        },'json');
+    });
+</script>
+<body>
+    <div id="messageBox">
+
+    </div>
+</body>
+</html>
