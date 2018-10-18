@@ -66,7 +66,7 @@ public class TestServiceImpl implements TestService {
             Elements elements=doc.getElementById("space_list").children().get(1).children();
             for (Element el : elements) {
                 JSONObject jo=new JSONObject();
-                jo.put("object",el.html());,
+                jo.put("object",el.html());
                 jsonArray.add(jo);
                log.info(el.html());
             }

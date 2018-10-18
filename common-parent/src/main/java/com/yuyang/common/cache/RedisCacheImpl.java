@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.ReturnType;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
@@ -561,5 +562,30 @@ public class RedisCacheImpl implements RedisCache<String, Object> {
 
     public Set<Object> getSetIntersect(String key, Set<Object> set) {
         return redisTemplate.boundSetOps(key).intersect(set);
+    }
+
+    @Override
+    public String scriptLoad(byte[] var1) {
+        return redisTemplate.getConnectionFactory().getConnection().scriptLoad(var1);
+    }
+
+    @Override
+    public List<Boolean> scriptExists(String... var1) {
+        return redisTemplate.getConnectionFactory().getConnection().scriptExists(var1);
+    }
+
+    @Override
+    public <T> T eval(byte[] var1, ReturnType var2, int var3, byte[]... var4) {
+        return redisTemplate.getConnectionFactory().getConnection().eval(var1,var2,var3,var4);
+    }
+
+    @Override
+    public <T> T evalSha(String var1, ReturnType var2, int var3, byte[]... var4) {
+        return redisTemplate.getConnectionFactory().getConnection().evalSha(var1,var2,var3,var4);
+    }
+
+    @Override
+    public <T> T evalSha(byte[] var1, ReturnType var2, int var3, byte[]... var4) {
+        return redisTemplate.getConnectionFactory().getConnection().evalSha(var1,var2,var3,var4);
     }
 }

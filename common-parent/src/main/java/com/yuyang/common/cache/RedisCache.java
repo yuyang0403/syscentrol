@@ -1,7 +1,9 @@
 package com.yuyang.common.cache;
 
 import org.springframework.data.redis.connection.DataType;
+import org.springframework.data.redis.connection.ReturnType;
 import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.lang.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -673,4 +675,18 @@ public interface RedisCache<K, V> {
      * @return
      */
     Boolean addZSet(K key, double[] score, Object[] value);
+    @Nullable
+    String scriptLoad(byte[] var1);
+
+    @Nullable
+    List<Boolean> scriptExists(String... var1);
+
+    @Nullable
+    <T> T eval(byte[] var1, ReturnType var2, int var3, byte[]... var4);
+
+    @Nullable
+    <T> T evalSha(String var1, ReturnType var2, int var3, byte[]... var4);
+
+    @Nullable
+    <T> T evalSha(byte[] var1, ReturnType var2, int var3, byte[]... var4);
 }

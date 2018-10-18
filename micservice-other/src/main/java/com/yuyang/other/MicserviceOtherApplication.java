@@ -15,7 +15,7 @@ public class MicserviceOtherApplication {
     public static void main(String[] args) {
         SpringApplication.run(MicserviceOtherApplication.class, args);
     }
-    @Bean
+    //@Bean
     public ServerEndpointExporter serverEndpointExporter() {
         return new ServerEndpointExporter();
     }
