@@ -1,0 +1,17 @@
+# 缓存配置
+redis:
+  cluster:
+    address: 172.18.3.148:7000,172.18.3.148:7001,172.18.3.148:7002,172.18.3.148:7003,172.18.3.148:7004,172.18.3.148:7005
+    maxRedirections: 6
+  sentinel:
+    master: redis-master
+    nodes: 172.18.3.148:6379
+  single:
+    ip: 172.18.3.148
+    port: 6379
+  expire: 3600
+  max-active: 500
+  max-idle: 5000
+  max-wait: 10000
+  testOnBorrow: true
+  timeout: 60000

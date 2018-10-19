@@ -4,6 +4,7 @@ import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.connection.ReturnType;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.lang.Nullable;
+import redis.clients.jedis.Tuple;
 
 import java.util.List;
 import java.util.Map;
@@ -17,676 +18,390 @@ import java.util.TreeSet;
  **/
 public interface RedisCache<K, V> {
     /**
-     * 用户排序通过注册时间的 权重值
-     *
-     * @param date
+     * 列出所有的key
      * @return
      */
-    double getCreateTimeScore(long date);
+    public Set<?> getKeys();
 
     /**
-     * 获取Redis中所有的键的key
-     *
+     * 列出所有的key
+     * @param db数据库名称
      * @return
      */
-    Set<K> getAllKeys();
+    public Set<?> getKeys(String db);
+
+    public Set<?> getKeys(String keyClue,String db);
 
     /**
-     * 获取所有的普通key-value
-     *
-     * @return
-     */
-    Map<K, V> getAllString();
-
-    /**
-     * 获取所有的Set -key-value
-     *
-     * @return
-     */
-    Map<K, Set<V>> getAllSet();
-
-    /**
-     * 获取所有的ZSet正序  -key-value 不获取权重值
-     *
-     * @return
-     */
-    Map<K, Set<V>> getAllZSetReverseRange();
-
-    /**
-     * 获取所有的ZSet倒序  -key-value 不获取权重值
-     *
-     * @return
-     */
-    Map<K, Set<V>> getAllZSetRange();
-
-    /**
-     * 获取所有的List -key-value
-     *
-     * @return
-     */
-    Map<K, List<V>> getAllList();
-
-    /**
-     * 获取所有的Map -key-value
-     *
-     * @return
-     */
-    Map<K, Map<K, V>> getAllMap();
-
-    /**
-     * 添加一个list
-     *
-     * @param key
-     * @param objectList
-     */
-    void addList(K key, List<V> objectList);
-
-    /**
-     * 向list中增加值
-     *
-     * @param key
-     * @param obj
-     * @return 返回在list中的下标
-     */
-    long addList(K key, V obj);
-
-    /**
-     * 向list中增加值
-     *
-     * @param key
-     * @param obj
-     * @return 返回在list中的下标
-     */
-    long addList(K key, V... obj);
-
-    /**
-     * 输出list
-     *
-     * @param key List的key
-     * @param s   开始下标
-     * @param e   结束的下标
-     * @return
-     */
-    List<V> getList(K key, long s, long e);
-
-    /**
-     * 输出完整的list
-     *
-     * @param key
-     */
-    List<V> getList(K key);
-
-    /**
-     * 获取list集合中元素的个数
+     * 检查给定key是否存在
      *
      * @param key
      * @return
      */
-    long getListSize(K key);
+    public Boolean exists(String key);
 
     /**
-     * 移除list中某值
-     * 移除list中 count个value为object的值,并且返回移除的数量,
-     * 如果count为0,或者大于list中为value为object数量的总和,
-     * 那么移除所有value为object的值,并且返回移除数量
+     * 检查给定key是否存在
      *
      * @param key
-     * @param object
-     * @return 返回移除数量
+     * @param db数据库名称
+     * @return
      */
-    long removeListValue(K key, V object);
+    public Boolean exists(String key,String db);
 
     /**
-     * 移除list中某值
+     * 移除给定的一个或多个key。如果key不存在，则忽略该命令。
      *
      * @param key
-     * @param object
-     * @return 返回移除数量
      */
-    long removeListValue(K key, V... object);
+    public Long del(String key);
+    public void del(String key,String db);
+
+
+    public void delByte(String key);
+    public void delByte(String key,String db);
 
     /**
-     * 批量删除key对应的value
+     * 简单的字符串设置
+     *
+     * @param key
+     * @param value
+     */
+    public void set(String key,String value);
+
+    /**
+     *
+     * @param key
+     * @param value
+     * @param expiration
+     */
+    public void set(String key, String value, Integer expiration);
+
+    /**
+     * 设置字符串
+     *
+     * @param key
+     * @param value
+     * @param db
+     */
+    public void set(String key,String value,String db);
+    public void setByte(String key,byte[] value);
+    public void setByte(String key,byte[] value,String db);
+
+    public String lpop(String key);
+
+    /**
+     * 返回key所关联的字符串值
+     *
+     * @param key
+     * @return
+     */
+    public String get(String key);
+
+    /**
+     *
+     * @param key
+     *            键值
+     * @param db
+     *            数据库名称
+     * @return
+     */
+    public String get(String key,String db);
+    public byte[] getByte(String key);
+    public byte[] getByte(String key,String db);
+
+    /**
+     * 同时设置一个或多个key-value对 ("haha", "111", "xixi", "222")
+     *
+     * @param keyvalues
+     */
+    public void mset(String... keyvalues);
+
+    /**
+     * 返回所有(一个或多个)给定key的值
      *
      * @param keys
-     */
-    void remove(final K... keys);
-
-    /**
-     * 删除缓存
-     * 根据key精确匹配删除
-     *
-     * @param key
-     */
-    void remove(final K key);
-
-    /**
-     * 通过分数删除ZSet中的值
-     *
-     * @param key
-     * @param s
-     * @param e
-     */
-    void removeZSetRangeByScore(String key, double s, double e);
-
-    /**
-     * 设置Set的过期时间
-     *
-     * @param key
-     * @param time
      * @return
      */
-    Boolean setSetExpireTime(String key, Long time);
+    public List<?> mget(String... keys);
 
     /**
-     * 设置ZSet的过期时间
+     * key seconds 为给定key设置生存时间。当key过期时，它会被自动删除。
      *
      * @param key
-     * @param time
-     * @return
+     * @param expire
      */
-    Boolean setZSetExpireTime(String key, Long time);
+    public void expire(String key,int expire);
+
+    public void expire(String key,String db,int timestamp);
+
+    public void expireAt(String key,long timestamp);
+
+    // 查看一个键的所剩的有效期
+    public long ttl(String key,String db);
+
+    public void expireByte(String key,int expire);
 
     /**
-     * 判断缓存中是否有key对应的value
-     *
-     * @param key
-     * @return
-     */
-    boolean exists(final K key);
-
-    /**
-     * 读取String缓存 可以是对象
-     *
-     * @param key
-     * @return
-     */
-    V get(final K key);
-
-    /**
-     * 读取String缓存 可以是对象
-     *
-     * @param key
-     * @return
-     */
-    List<V> get(final K... key);
-
-    /**
-     * 读取缓存 可以是对象 根据正则表达式匹配
-     *
-     * @param regKey
-     * @return
-     */
-    List<Object> getByRegular(final K regKey);
-
-    /**
-     * 写入缓存 可以是对象
+     * 如果key已经存在并且是一个字符串，APPEND命令将value追加到key原来的值之后。
      *
      * @param key
      * @param value
      */
-    void set(final K key, V value);
+    public void append(String key,String value);
 
     /**
-     * 写入缓存
+     * HASH操作 将哈希表key中的域field的值设为value。
      *
      * @param key
+     * @param field
      * @param value
-     * @param expireTime 过期时间 -单位s
-     * @return
      */
-    void set(final K key, V value, Long expireTime);
+    public void hset(String key,String field,String value);
 
+    public void hsetObject(String key, Object field, Object value);
     /**
-     * 设置一个key的过期时间（单位：秒）
+     * HASH操作 返回哈希表key中给定域field的值。
      *
      * @param key
-     * @param expireTime
+     * @param field
      * @return
      */
-    boolean setExpireTime(K key, Long expireTime);
+    public String hget(String key,String field);
+
+    public Object hgetObject(String key, Object field);
 
     /**
-     * 获取key的类型
-     *
-     * @param key
-     * @return
-     */
-    DataType getType(K key);
-
-    /**
-     * 删除map中的某个对象
-     *
-     * @param key   map对应的key
-     * @param field map中该对象的key
-     */
-    void removeMapField(K key, V... field);
-
-    /*
-     * 获取map对象
-     * @param key map对应的key
-     * @return
-     */
-    Map<K, V> getMap(K key);
-
-    /*
-     * 获取map对象
-     * @param key map对应的key
-     * @return
-     */
-    Long getMapSize(K key);
-
-    /**
-     * 获取map缓存中的某个对象
-     *
-     * @param key   map对应的key
-     * @param field map中该对象的key
-     * @return
-     */
-    <T> T getMapField(K key, K field);
-
-    /**
-     * 判断map中对应key的key是否存在
-     *
-     * @param key map对应的key
-     * @return
-     */
-    Boolean hasMapKey(K key, K field);
-
-    /**
-     * 获取map对应key的value
-     *
-     * @param key map对应的key
-     * @return
-     */
-    List<V> getMapFieldValue(K key);
-
-    /**
-     * 获取map的key
-     *
-     * @param key map对应的key
-     * @return
-     */
-    Set<V> getMapFieldKey(K key);
-
-    /**
-     * 添加map
+     * HASH操作 value(域-值)对设置到哈希表key中。
      *
      * @param key
      * @param map
      */
-    void addMap(K key, Map<K, V> map);
+    public void hmset(String key,Map<?,?> map);
 
     /**
-     * 向key对应的map中添加缓存对象
-     *
-     * @param key   cache对象key
-     * @param field map对应的key
-     * @param value 值
-     */
-    void addMap(K key, K field, Object value);
-
-    /**
-     * 向key对应的map中添加缓存对象
-     *
-     * @param key   cache对象key
-     * @param field map对应的key
-     * @param time  过期时间-整个MAP的过期时间
-     * @param value 值
-     */
-    void addMap(K key, K field, V value, long time);
-
-    /**
-     * 向set中加入对象
-     *
-     * @param key 对象key
-     * @param obj 值
-     */
-    void addSet(K key, V... obj);
-
-    /**
-     * 处理事务时锁定key
+     * HASH操作 返回哈希表key中，一个或多个给定域的值。
      *
      * @param key
-     */
-    void watch(String key);
-
-    /**
-     * 移除set中的某些值
-     *
-     * @param key 对象key
-     * @param obj 值
-     */
-    long removeSetValue(K key, V obj);
-
-    /**
-     * 移除set中的某些值
-     *
-     * @param key 对象key
-     * @param obj 值
-     */
-    long removeSetValue(K key, V... obj);
-
-    /**
-     * 获取set的对象数
-     *
-     * @param key 对象key
-     */
-    long getSetSize(K key);
-
-    /**
-     * 判断set中是否存在这个值
-     *
-     * @param key 对象key
-     */
-    Boolean hasSetValue(K key, V obj);
-
-    /**
-     * 获得整个set
-     *
-     * @param key 对象key
-     */
-    Set<V> getSet(K key);
-
-    /**
-     * 获得set 并集
-     *
-     * @param key
-     * @param otherKey
+     * @param fields
      * @return
      */
-    Set<V> getSetUnion(K key, K otherKey);
+    public List<?> hmget(String key,String... fields);
 
     /**
-     * 获得set 并集
+     * HASH操作 返回哈希表key中，所有的域和值。
      *
      * @param key
-     * @param set
      * @return
      */
-    Set<V> getSetUnion(K key, Set<Object> set);
+    public Map<String, String> hgetAll(String key);
+
+    public Map<Object, Object> hgetAllObject(String key);
 
     /**
-     * 获得set 交集
+     * LIST操作 LPUSH key value [value ...]将值value插入到列表key的表头。
      *
      * @param key
-     * @param otherKey
+     * @param value
+     */
+    public void lpush(String key,String value);
+    public void lpush(String key,String value,String db);
+    public void rpush(String key,String value,String db);
+    public void lpushByte(String key,byte[][] value);
+    public void lpushByte(String key,byte[] value);
+    public void lpushByte(String key,byte[] value,String db);
+
+    /**
+     * LIST操作 top返回列表key中指定区间内的元素，区间以偏移量start和stop指定。 下标(index)参数start和stop都以0为底，也就是说，以0表示列表的第一个元素，以1表示列表的第二个元素，以此类推。
+     * 你也可以使用负数下标，以-1表示列表的最后一个元素，-2表示列表的倒数第二个元素，以此类推。
+     *
+     * @param key
+     * @param start
+     * @param stop
      * @return
      */
-    Set<V> getSetIntersect(K key, K otherKey);
+    public List<?> lrange(String key,int start,int stop);
+    public List<?> lrange(String key,int start,int stop,String db);
+    public List<?> lrangeByte(String key,int start,int stop);
+    public List<?> lrangeByte(String key,int start,int stop,String db);
 
     /**
-     * 获得set 交集
+     * SET 操作 将member元素加入到集合key当中。
      *
      * @param key
-     * @param set
+     * @param value
+     */
+    public void sadd(String key,String value);
+
+    /**
+     * SET 操作 SREM key member移除集合中的member元素。
+     *
+     * @param key
+     * @param value
+     */
+    public void srem(String key,String value);
+
+    /**
+     * SET 操作 SMEMBERS key返回集合key中的所有成员。
+     *
+     * @param key
      * @return
      */
-    Set<V> getSetIntersect(K key, Set<Object> set);
+    public Set<?> smembers(String key);
 
     /**
-     * 模糊移除 支持*号等匹配移除
+     * 检查给定key是否存在
      *
-     * @param blears
-     */
-    void removeBlear(K... blears);
-
-    /**
-     * 修改key名 如果不存在该key或者没有修改成功返回false
-     *
-     * @param oldKey
-     * @param newKey
+     * @param key
+     * @param db数据库名称
      * @return
      */
-    Boolean renameIfAbsent(String oldKey, String newKey);
+    public void hmset(String key,Map<?,?> map,String db);
+
+    public List<String> brpop(int timeout,String db,String... keys);
+    public List<byte[]> brpop(int timeout,byte[]... keys);
 
     /**
-     * 模糊移除 支持*号等匹配移除
-     *
-     * @param blear
-     */
-    void removeBlear(K blear);
-
-    /**
-     * 根据正则表达式来移除key-value
-     *
-     * @param blears
-     */
-    void removeByRegular(String... blears);
-
-    /**
-     * 根据正则表达式来移除key-value
-     *
-     * @param blears
-     */
-    void removeByRegular(String blears);
-
-    /**
-     * 根据正则表达式来移除 Map中的key-value
+     * 根据参数 count 的值，移除列表中与参数 value 相等的元素。
      *
      * @param key
-     * @param blears
+     * @param cnt
+     *            > 0 : 从表头开始向表尾搜索，移除与 value 相等的元素，数量为 count 。 < 0 : 从表尾开始向表头搜索，移除与 value 相等的元素，数量为 count 的绝对值。 = 0 : 移除表中所有与 value 相等的值。
+     * @param value
      */
-    void removeMapFieldByRegular(K key, K... blears);
+    public Long lrem(String key,long cnt,String value,String dbs);
 
     /**
-     * 根据正则表达式来移除 Map中的key-value
+     * 获取旧值返回新值，不存在返回nil
      *
      * @param key
-     * @param blear
+     * @param newValue
+     * @param db
+     * @return 旧值
      */
-    void removeMapFieldByRegular(K key, K blear);
+    public String getset(String key, String newValue, String db);
 
     /**
-     * 移除key 对应的value
+     * 分布锁
      *
      * @param key
      * @param value
      * @return
      */
-    Long removeZSetValue(K key, V... value);
+    public Long setnx(String key,String value,String db);
 
     /**
-     * 移除key ZSet
+     * 计数器
+     */
+    public Long hincrBy(String key,String field,Integer value,String db);
+
+    /**
+     * 计数器
+     */
+    public Long incrBy(String key,Integer value,String db);
+
+    /**
+     * 判断key是否存在
      *
      * @param key
+     * @param field
+     * @param db
      * @return
      */
-    void removeZSet(K key);
+    public Boolean hexists(String key, String field, String db);
+
+    public void hset(String key,String field,String value, String db);
 
     /**
-     * 删除，键为K的集合，索引start<=index<=end的元素子集
+     * 删除key field
      *
      * @param key
-     * @param start
-     * @param end
-     * @return
+     * @param fields
+     * @param db
      */
-    void removeZSetRange(K key, Long start, Long end);
+    public void hdel(String key, String fields, String db);
+
+    public void hdelObject(String key, Object fields);
+
 
     /**
-     * 并集 将key对应的集合和key1对应的集合合并到key2中
-     * 如果分数相同的值，都会保留
-     * 原来key2的值会被覆盖
-     *
-     * @param key
-     * @param key1
-     * @param key2
-     */
-    void setZSetUnionAndStore(String key, String key1, String key2);
-
-    /**
-     * 获取整个有序集合ZSET，正序
-     *
-     * @param key
-     */
-    <T> T getZSetRange(K key);
-
-    /**
-     * 获取有序集合ZSET
-     * 键为K的集合，索引start<=index<=end的元素子集，正序
-     *
-     * @param key
-     * @param start 开始位置
-     * @param end   结束位置
-     */
-    <T> T getZSetRange(K key, long start, long end);
-
-    /**
-     * 获取整个有序集合ZSET，倒序
-     *
-     * @param key
-     */
-    Set<Object> getZSetReverseRange(K key);
-
-    /**
-     * 获取有序集合ZSET
-     * 键为K的集合，索引start<=index<=end的元素子集，倒序
-     *
-     * @param key
-     * @param start 开始位置
-     * @param end   结束位置
-     */
-    Set<V> getZSetReverseRange(K key, long start, long end);
-
-    /**
-     * 通过分数(权值)获取ZSET集合 正序 -从小到大
-     *
-     * @param key
-     * @param start
-     * @param end
-     * @return
-     */
-    Set<V> getZSetRangeByScore(String key, double start, double end);
-
-    /**
-     * 通过分数(权值)获取ZSET集合 倒序 -从大到小
-     *
-     * @param key
-     * @param start
-     * @param end
-     * @return
-     */
-    Set<V> getZSetReverseRangeByScore(String key, double start, double end);
-
-    /**
-     * 键为K的集合，索引start<=index<=end的元素子集
-     * 返回泛型接口（包括score和value），正序
-     *
-     * @param key
-     * @param start
-     * @param end
-     * @return
-     */
-    Set<ZSetOperations.TypedTuple<V>> getZSetRangeWithScores(K key, long start, long end);
-
-    /**
-     * 键为K的集合，索引start<=index<=end的元素子集
-     * 返回泛型接口（包括score和value），倒序
-     *
-     * @param key
-     * @param start
-     * @param end
-     * @return
-     */
-    Set<ZSetOperations.TypedTuple<V>> getZSetReverseRangeWithScores(K key, long start, long end);
-
-    /**
-     * 键为K的集合
-     * 返回泛型接口（包括score和value），正序
-     *
-     * @param key
-     * @return
-     */
-    Set<ZSetOperations.TypedTuple<V>> getZSetRangeWithScores(K key);
-
-    /**
-     * 键为K的集合
-     * 返回泛型接口（包括score和value），倒序
-     *
-     * @param key
-     * @return
-     */
-    Set<ZSetOperations.TypedTuple<V>> getZSetReverseRangeWithScores(K key);
-
-    /**
-     * 键为K的集合，sMin<=score<=sMax的元素个数
-     *
-     * @param key
-     * @param sMin
-     * @param sMax
-     * @return
-     */
-    long getZSetCountSize(K key, double sMin, double sMax);
-
-    /**
-     * 获取Zset 键为K的集合元素个数
-     *
-     * @param key
-     * @return
-     */
-    long getZSetSize(K key);
-
-    /**
-     * 获取键为K的集合，value为obj的元素分数
-     *
-     * @param key
-     * @param value
-     * @return
-     */
-    double getZSetScore(K key, V value);
-
-    /**
-     * 元素分数增加，delta是增量
-     *
-     * @param key
-     * @param value
-     * @param delta
-     * @return
-     */
-    double incrementZSetScore(K key, V value, double delta);
-
-    /**
-     * 添加有序集合ZSET
-     * 默认按照score升序排列，存储格式K(1)==V(n)，V(1)=S(1)
+     * 添加或设置zset中的member
      *
      * @param key
      * @param score
-     * @param value
+     * @param member
      * @return
      */
-    Boolean addZSet(String key, double score, Object value);
+    public Long zadd(String key, double score, String member);
 
     /**
-     * 添加有序集合ZSET
+     * 删除zset中的member
      *
      * @param key
-     * @param value
+     * @param member
      * @return
      */
-    Long addZSet(K key, TreeSet<V> value);
+    public Long zrem(String key, String... member);
 
     /**
-     * 添加有序集合ZSET
+     * 获取zset中某member的分数
+     *
+     * @param key
+     * @param member
+     * @return
+     */
+    public Double zscore(String key, String member);
+
+    /**
+     * 获取zset中某member的排名(按 score 从大到小排序)
+     *
+     * @param key
+     * @param member
+     * @return
+     */
+    public Long zrank(String key, String member);
+
+
+    /**
+     * 获取zset中某member的排名(按 score 从大到小排序)
+     *
+     * @param key
+     * @param member
+     * @return
+     */
+    public Long zrevrank(String key, String member);
+
+    /**
+     * 返回名称为 key 的 zset（按 score 从大到小排序）中的 index 从 start 到 end 的所有元素
+     *
+     * @param key
+     * @param start
+     * @param end
+     * @return
+     */
+    public Set<Tuple> zrevrangeWithScores(String key, Long start, Long end);
+
+    public Object eval(String script, List<String> keys, List<String> params);
+
+    public Long incrBy4Expire(String key, Integer value, int second, int db);
+
+    /**
+     * @Description HASH操作 将哈希表key中的域field的值设为value,并设置过期时间
+     */
+    public void hsetEx(String key,String field,String value, int seconds);
+
+    /**
+     * hash hincrBy
+     */
+    Long hincrBy(String key, String field, Integer value, int db, int expireTime);
+
+    /**
+     * 增加或设置zset中的member的值
      *
      * @param key
      * @param score
-     * @param value
+     * @param member
      * @return
      */
-    Boolean addZSet(K key, double[] score, Object[] value);
-    @Nullable
-    String scriptLoad(byte[] var1);
-
-    @Nullable
-    List<Boolean> scriptExists(String... var1);
-
-    @Nullable
-    <T> T eval(byte[] var1, ReturnType var2, int var3, byte[]... var4);
-
-    @Nullable
-    <T> T evalSha(String var1, ReturnType var2, int var3, byte[]... var4);
-
-    @Nullable
-    <T> T evalSha(byte[] var1, ReturnType var2, int var3, byte[]... var4);
+    Double zincrby(String key, double score, String member);
 }

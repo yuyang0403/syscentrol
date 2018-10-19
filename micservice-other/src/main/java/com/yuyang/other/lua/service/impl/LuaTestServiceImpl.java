@@ -1,19 +1,18 @@
 package com.yuyang.other.lua.service.impl;
 
-import com.yuyang.common.cache.CacheManager;
 import com.yuyang.common.cache.RedisCache;
 import com.yuyang.other.lua.service.LuaTestService;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.data.redis.connection.ReturnType;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 @Service
 public class LuaTestServiceImpl implements LuaTestService {
@@ -23,7 +22,8 @@ public class LuaTestServiceImpl implements LuaTestService {
 	private static String SUB_PRODUCT_SCRIPT=null;
 	private static String READFROMREDISSCRIPT=null;
 	private static String JSON_CONTENT=null;
-	RedisCache redisCache=CacheManager.getSingletonCache();
+	@Autowired
+	RedisCache redisCache;
 	static{
 		SUB_PRODUCT_SCRIPT=loadScript(SUB_PRODUCT_PATH);
 		JSON_CONTENT=loadScript(JSON_PATH);
@@ -35,7 +35,9 @@ public class LuaTestServiceImpl implements LuaTestService {
 		System.out.println(JSON_CONTENT);
 	}
 	public Map<String, String> writeToRedis() {
-		redisCache.eval(SUB_PRODUCT_SCRIPT.getBytes(), ReturnType.INTEGER, 0, JSON_CONTENT.getBytes());
+		List<String> params=new ArrayList<>();
+		params.add(JSON_CONTENT);
+		redisCache.eval(SUB_PRODUCT_SCRIPT, new ArrayList<>(), params);
 		Map<String, String> maps=new HashMap<String, String>();
 		maps.put("script", SUB_PRODUCT_SCRIPT);
 		maps.put("json", JSON_CONTENT);
@@ -61,7 +63,7 @@ public class LuaTestServiceImpl implements LuaTestService {
 		
 	}
 	public String readFromRedis() {
-		Object obj=redisCache.eval(READFROMREDISSCRIPT.getBytes(),ReturnType.VALUE,0);
+		Object obj=redisCache.eval(READFROMREDISSCRIPT,null,null);
 		try {
 			return new String(((byte[])obj), "utf-8");
 		} catch (UnsupportedEncodingException e) {

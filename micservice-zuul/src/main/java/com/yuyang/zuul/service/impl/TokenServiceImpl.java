@@ -1,6 +1,5 @@
 package com.yuyang.zuul.service.impl;
 
-import com.yuyang.common.cache.CacheManager;
 import com.yuyang.common.cache.RedisCache;
 import com.yuyang.common.constant.Constant;
 import com.yuyang.zuul.service.TokenService;
@@ -19,10 +18,10 @@ import org.springframework.stereotype.Service;
 public class TokenServiceImpl implements TokenService {
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Autowired
+    RedisCache redisCache;
     @Override
     public boolean checkToken(String token) {
-        //获取缓存单例
-        RedisCache redisCache = CacheManager.getSingletonCache();
         Claims claims = null;
         String userid = "";
         try {
@@ -43,7 +42,7 @@ public class TokenServiceImpl implements TokenService {
         }
         //验证通过重新刷新缓存的key
         redisCache.set(Constant.TOKEN_KEY + userid, token);
-        redisCache.setExpireTime(Constant.TOKEN_KEY + userid, 20 * 60L);
+        redisCache.expire(Constant.TOKEN_KEY + userid, 20 * 60);
         logger.info("token验证通过。" + token);
         return true;
     }

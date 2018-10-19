@@ -2,7 +2,6 @@ package com.yuyang.user.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.yuyang.common.cache.CacheManager;
 import com.yuyang.common.cache.RedisCache;
 import com.yuyang.common.constant.Constant;
 import com.yuyang.common.util.CookieUtil;
@@ -31,12 +30,12 @@ public class LoginController {
     Logger logger = LoggerFactory.getLogger(this.getClass());
     @Resource
     SysUserService sysUserService;
+    @Autowired
+    RedisCache redisCache;
 
     @RequestMapping(value = "login", method = RequestMethod.POST)
     @CrossOrigin(origins = "*")
     public String login(SysUser user, HttpServletRequest request, HttpServletResponse response) {
-        //获取缓存单例
-        RedisCache redisCache = CacheManager.getSingletonCache();
         JsonObject result = new JsonObject();
         String userid = "";
         try {
@@ -61,7 +60,7 @@ public class LoginController {
         result.addProperty("token", jwtToken);
         result.addProperty("userid", userid);
         redisCache.set(Constant.TOKEN_KEY + userid, jwtToken);
-        redisCache.setExpireTime(Constant.TOKEN_KEY + userid, 20 * 60L);
+        redisCache.expire(Constant.TOKEN_KEY + userid, 20 * 60);
         //添加cookie
         CookieUtil.addCookie(response, "userid", userid, Constant.DEFAULT_COOKIE_PATH, Constant.DEFAULT_COOKIE_MAX_AGE);
         CookieUtil.addCookie(response, "token", jwtToken, Constant.DEFAULT_COOKIE_PATH, Constant.DEFAULT_COOKIE_MAX_AGE);
@@ -78,8 +77,6 @@ public class LoginController {
     @CrossOrigin(origins = "*")
     @PostMapping("login/logout")
     public void logout(@RequestParam("token") String token, HttpServletRequest request, HttpServletResponse response) {
-        //获取缓存单例
-        RedisCache redisCache = CacheManager.getSingletonCache();
         Claims claims = null;
         String userid = "";
         try {
@@ -88,7 +85,7 @@ public class LoginController {
         } catch (Exception e) {
             //无需处理该异常
         } finally {
-            redisCache.remove(Constant.TOKEN_KEY + userid);
+            redisCache.del(Constant.TOKEN_KEY + userid);
             //清除cookie
             CookieUtil.delCookie(request, response, "token");
         }
