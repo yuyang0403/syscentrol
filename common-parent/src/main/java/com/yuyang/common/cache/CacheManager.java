@@ -26,7 +26,7 @@ public class CacheManager {
             return redisCache;
         }
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
-        redisStandaloneConfiguration.setHostName("192.168.198.129");
+        redisStandaloneConfiguration.setHostName("172.18.3.148");
         redisStandaloneConfiguration.setPort(6379);
         JedisClientConfiguration.JedisClientConfigurationBuilder jedisClientConfiguration = JedisClientConfiguration.builder();
         jedisClientConfiguration.connectTimeout(Duration.ofMillis(10000));
