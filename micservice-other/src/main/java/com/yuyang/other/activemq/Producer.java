@@ -18,8 +18,8 @@ public class Producer {
     @Autowired
     private JmsMessagingTemplate jmsMessagingTemplate;
     public void sendMsg(Object msg){
-        for (int i=1;i<=10000;i++){
-            jmsMessagingTemplate.convertAndSend("send_message_first",msg.toString()+i);
+        for (int i=1;i<=100;i++){
+            jmsMessagingTemplate.convertAndSend("send_message_second",msg.toString()+i);
             log.info("发出消息："+(msg.toString()+i));
         }
     }

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class Consumer {
-    @JmsListener(destination = "send_message_first")
+    @JmsListener(destination = "send_message_second")
     public void receiveQueue(String text){
       log.info("Consumer收到消息："+text);
     }

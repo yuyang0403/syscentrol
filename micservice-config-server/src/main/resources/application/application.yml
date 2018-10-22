@@ -15,3 +15,11 @@ redis:
   max-wait: 10000
   testOnBorrow: true
   timeout: 60000
+#activemq配置
+activemq:
+  broker-url: tcp://172.18.3.148:61616
+  close-timeout: 50
+  pool:
+    max-connections: 100
+  send-timeout: 3000
+  client-id: 1433223

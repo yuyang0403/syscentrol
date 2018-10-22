@@ -11,12 +11,6 @@ spring:
         enabled: true
         service-id: config-server
       label: other
-  activemq:
-    broker-url: tcp://192.168.198.129:61616
-    close-timeout: 50s
-    pool:
-      max-connections: 100
-    send-timeout: 3000ms
 eureka:
   instance:
     instance-id: ${spring.application.name}:${server.port}

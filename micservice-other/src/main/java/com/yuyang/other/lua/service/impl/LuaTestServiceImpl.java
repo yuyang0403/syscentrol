@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,13 +62,8 @@ public class LuaTestServiceImpl implements LuaTestService {
 		
 	}
 	public String readFromRedis() {
-		Object obj=redisCache.eval(READFROMREDISSCRIPT,null,null);
-		try {
-			return new String(((byte[])obj), "utf-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-			return null;
-		}
+		Object obj=redisCache.eval(READFROMREDISSCRIPT,new ArrayList<>(),new ArrayList<>());
+		return obj.toString();
 	}
 
 }
