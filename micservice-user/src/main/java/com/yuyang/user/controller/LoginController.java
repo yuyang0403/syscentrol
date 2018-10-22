@@ -10,9 +10,10 @@ import com.yuyang.user.service.SysUserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -26,16 +27,17 @@ import java.util.Date;
  * @desc
  **/
 @RestController
+@Api(tags = "后台登录接口")
 public class LoginController {
     Logger logger = LoggerFactory.getLogger(this.getClass());
     @Resource
     SysUserService sysUserService;
-    @Autowired
+    @Resource
     RedisCache redisCache;
-
+    @ApiOperation(value = "登录", response = String.class, notes = "登录")
     @RequestMapping(value = "login", method = RequestMethod.POST)
     @CrossOrigin(origins = "*")
-    public String login(SysUser user, HttpServletRequest request, HttpServletResponse response) {
+    public String login(SysUser user, HttpServletResponse response) {
         JsonObject result = new JsonObject();
         String userid = "";
         try {
@@ -74,6 +76,7 @@ public class LoginController {
      * @param token
      * @return
      */
+    @ApiOperation(value = "退出登录", response = String.class, notes = "退出登录")
     @CrossOrigin(origins = "*")
     @PostMapping("login/logout")
     public void logout(@RequestParam("token") String token, HttpServletRequest request, HttpServletResponse response) {

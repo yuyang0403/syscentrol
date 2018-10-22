@@ -2,12 +2,11 @@ package com.yuyang.user.controller;
 
 import com.yuyang.user.model.SysUser;
 import com.yuyang.user.service.SysUserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -16,6 +15,7 @@ import javax.annotation.Resource;
  * @create 2018/6/14 14:11
  * @desc 后台管理的controller
  **/
+//@Api("用户后台管理")
 @RestController
 @RequestMapping("user/manager")
 public class SysUserManagerController {
@@ -23,7 +23,8 @@ public class SysUserManagerController {
     @Resource
     SysUserService sysUserService;
 
-    @RequestMapping(value = "getUserById/{id}")
+    @ApiOperation(value="按照用户ID获取用户信息",notes="按照用户ID获取用户信息")
+    @RequestMapping(value = "getUserById/{id}",method = RequestMethod.POST)
     public SysUser getUserById(@PathVariable("id") Long id) {
         return sysUserService.selectSysUserById(id);
     }
