@@ -5,9 +5,9 @@ redis:
     maxRedirections: 6
   sentinel:
     master: redis-master
-    nodes: 172.18.3.148:6379
+    nodes: 39.105.162.72:6379
   single:
-    ip: 172.18.3.148
+    ip: 39.105.162.72
     port: 6379
   expire: 3600
   max-active: 500
@@ -17,7 +17,7 @@ redis:
   timeout: 60000
 #activemq配置
 activemq:
-  broker-url: tcp://172.18.3.148:61616
+  broker-url: tcp://39.105.162.72:61616
   close-timeout: 50
   pool:
     max-connections: 100

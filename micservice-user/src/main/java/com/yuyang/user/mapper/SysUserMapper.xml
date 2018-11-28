@@ -19,12 +19,14 @@
         <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
         <result column="update_by" jdbcType="TIMESTAMP" property="updateBy"/>
+        <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
+        <result column="desc" jdbcType="VARCHAR" property="desc"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
     </resultMap>
     <sql id="Base_Column_List">
         id, login_name, password, truename, phone, user_type, email, nick_name, weibo_id,
         login_num, last_login_time, reg_from,status, create_time, create_by, update_time, update_by,
-        remark
+        avatar,`desc`,remark
     </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
@@ -36,7 +38,7 @@
         select
         <include refid="Base_Column_List"/>
         from sys_user
-        where login_name=#{loginName} and password=#{password} and status=0
+        where login_name=#{loginName} and password=#{password} and status=1
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
         delete from sys_user
@@ -96,6 +98,12 @@
             <if test="updateBy != null">
                 update_by,
             </if>
+            <if test="avatar != null">
+                avatar,
+            </if>
+            <if test="desc != null">
+                `desc`,
+            </if>
             <if test="remark != null">
                 remark,
             </if>
@@ -151,6 +159,12 @@
             </if>
             <if test="updateBy != null">
                 #{updateBy,jdbcType=TIMESTAMP},
+            </if>
+            <if test="avatar != null">
+                #{avatar},
+            </if>
+            <if test="desc != null">
+                #{desc},
             </if>
             <if test="remark != null">
                 #{remark,jdbcType=VARCHAR},
@@ -208,6 +222,12 @@
             <if test="updateBy != null">
                 update_by = #{updateBy,jdbcType=TIMESTAMP},
             </if>
+            <if test="avatar != null">
+                avatar = #{avatar},
+            </if>
+            <if test="desc != null">
+                desc = #{desc},
+            </if>
             <if test="remark != null">
                 remark = #{remark,jdbcType=VARCHAR},
             </if>
@@ -222,7 +242,7 @@
         LEFT JOIN sys_role role ON role.id=srm.role_id
         LEFT JOIN sys_user_role sur ON sur.role_id=role.id
         LEFT JOIN sys_user user ON user.id=sur.user_id
-        WHERE user.status=0 AND menu.status=0 AND role.status=0 AND user.id=#{userid}
+        WHERE user.status=1 AND menu.status=1 AND role.status=1 AND user.id=#{userid}
     </select>
     <select id="selectByPage" resultMap="BaseResultMap">
         <if test="loginName != null">

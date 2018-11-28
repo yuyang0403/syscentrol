@@ -161,4 +161,10 @@
         remark = #{remark,jdbcType=VARCHAR}
         where id = #{id,jdbcType=BIGINT}
     </update>
+    <select id="selectRolesByUserId" resultMap="BaseResultMap">
+        SELECT DISTINCT role.* FROM sys_role role
+        LEFT JOIN sys_user_role sur ON sur.role_id=role.id
+        LEFT JOIN sys_user user ON user.id=sur.user_id
+        WHERE `user`.status=1 AND role.status=1 AND `user`.id=#{userid}
+    </select>
 </mapper>

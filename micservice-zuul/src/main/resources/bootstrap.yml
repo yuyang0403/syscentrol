@@ -16,5 +16,9 @@ eureka:
   instance:
     instance-id: ${spring.application.name}:${server.port}
     prefer-ip-address: true
+zuul:
+#需要忽略的头部信息，不在传播到其他服务
+  sensitive-headers: Access-Control-Allow-Origin
+  ignored-headers: Access-Control-Allow-Origin,H-APP-Id,Token,APPToken,token,tokens
 #http://localhost:10100/user-manager/user/manager/getUserById/1
 

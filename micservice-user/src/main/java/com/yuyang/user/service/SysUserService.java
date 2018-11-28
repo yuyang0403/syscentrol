@@ -1,5 +1,6 @@
 package com.yuyang.user.service;
 
+import com.yuyang.common.user.vo.UserInfoVO;
 import com.yuyang.user.model.SysUser;
 
 /**
@@ -33,4 +34,11 @@ public interface SysUserService {
      * @return
      */
     String selectByPage(SysUser user);
+
+    /**
+     * 根据token获取用户信息
+     * @param token
+     * @return
+     */
+    UserInfoVO selectUserByToken(String token);
 }

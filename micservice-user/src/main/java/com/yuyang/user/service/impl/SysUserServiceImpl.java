@@ -4,14 +4,22 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.gson.*;
+import com.netflix.discovery.converters.Auto;
+import com.yuyang.common.cache.RedisCache;
+import com.yuyang.common.user.vo.RoleInfoVO;
+import com.yuyang.common.user.vo.UserInfoVO;
+import com.yuyang.user.mapper.SysRoleMapper;
 import com.yuyang.user.mapper.SysUserMapper;
 import com.yuyang.user.model.SysMenu;
+import com.yuyang.user.model.SysRole;
 import com.yuyang.user.model.SysUser;
 import com.yuyang.user.service.SysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -24,6 +32,10 @@ public class SysUserServiceImpl implements SysUserService {
     Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
     @Autowired
     SysUserMapper sysUserMapper;
+    @Autowired
+    SysRoleMapper sysRoleMapper;
+    @Resource
+    RedisCache redisCache;
 
     @Override
     public SysUser selectSysUserById(Long id) {
@@ -100,5 +112,36 @@ public class SysUserServiceImpl implements SysUserService {
         user.setPa(page);
         user.setPageInfo(pageInfo);
         return user.getPageResult();
+    }
+
+    /**
+     * 根据token获取用户信息
+     * @param token
+     * @return
+     */
+    @Override
+    public UserInfoVO selectUserByToken(String token) {
+        UserInfoVO vo=null;
+        if(redisCache.exists(token)){
+            Long userid=Long.parseLong(redisCache.get(token));
+            vo=new UserInfoVO();
+            SysUser sysUser=sysUserMapper.selectByPrimaryKey(userid);
+            vo.setLoginName(sysUser.getLoginName());
+            vo.setTrueName(sysUser.getTruename());
+            vo.setAvatar(sysUser.getAvatar());
+            vo.setDesc(sysUser.getDesc());
+            vo.setToken(token);
+            //放入角色信息
+            List<SysRole> sysRoles=sysRoleMapper.selectRolesByUserId(userid);
+            if(!CollectionUtils.isEmpty(sysRoles)){
+                for (SysRole sysRole : sysRoles) {
+                    RoleInfoVO roleInfoVO=new RoleInfoVO();
+                    roleInfoVO.setCode(sysRole.getCode());
+                    roleInfoVO.setName(sysRole.getName());
+                    vo.getRoleList().add(roleInfoVO);
+                }
+            }
+        }
+        return vo;
     }
 }

@@ -18,6 +18,7 @@ import javax.annotation.Resource;
 //@Api("用户后台管理")
 @RestController
 @RequestMapping("user/manager")
+@CrossOrigin(origins = "*")
 public class SysUserManagerController {
     Logger logger = LoggerFactory.getLogger(this.getClass());
     @Resource
@@ -52,7 +53,6 @@ public class SysUserManagerController {
      * @return
      */
     @RequestMapping(value = "getUserList")
-    @CrossOrigin(origins = "*")
     public String getUserList(SysUser user) {
         String result = null;
         try {

@@ -32,17 +32,17 @@ public class TokenServiceImpl implements TokenService {
             return false;
         }
         //验证redis是否过期
-        if (!redisCache.exists(Constant.TOKEN_KEY + userid)) {
+        if (!redisCache.exists(token)) {
             logger.info("token 服务器中已过期");
             return false;
         }
-        if (!redisCache.get(Constant.TOKEN_KEY + userid).toString().equals(token)) {
-            logger.info("token 不同客户端token:" + token + "--redis token:" + redisCache.get(Constant.TOKEN_KEY + userid).toString());
+        if (!redisCache.get(token).equals(userid)) {
+            logger.info("token 不同客户端token:" + token + "--redis token:" + redisCache.get(token));
             return false;
         }
         //验证通过重新刷新缓存的key
-        redisCache.set(Constant.TOKEN_KEY + userid, token);
-        redisCache.expire(Constant.TOKEN_KEY + userid, 20 * 60);
+        redisCache.set(token,userid);
+        redisCache.expire(token, 20 * 60);
         logger.info("token验证通过。" + token);
         return true;
     }

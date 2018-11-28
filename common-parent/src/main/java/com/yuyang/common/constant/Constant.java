@@ -19,7 +19,7 @@ public class Constant {
      */
     public static final String DEFAULT_COOKIE_PATH = "/";
     /**
-     * cookie默认有效期7天
+     * cookie默认有效期30分钟
      */
-    public static final int DEFAULT_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
+    public static final int DEFAULT_COOKIE_MAX_AGE = 60 * 30;
 }

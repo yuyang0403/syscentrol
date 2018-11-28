@@ -2,8 +2,10 @@ package com.yuyang.user.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.yuyang.common.cache.RedisCache;
 import com.yuyang.common.constant.Constant;
+import com.yuyang.common.user.vo.UserInfoVO;
 import com.yuyang.common.util.CookieUtil;
 import com.yuyang.user.model.SysUser;
 import com.yuyang.user.service.SysUserService;
@@ -12,6 +14,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +31,7 @@ import java.util.Date;
  **/
 @RestController
 @Api(tags = "后台登录接口")
+@CrossOrigin(origins = "*")
 public class LoginController {
     Logger logger = LoggerFactory.getLogger(this.getClass());
     @Resource
@@ -36,7 +40,6 @@ public class LoginController {
     RedisCache redisCache;
     @ApiOperation(value = "登录", response = String.class, notes = "登录")
     @RequestMapping(value = "login", method = RequestMethod.POST)
-    @CrossOrigin(origins = "*")
     public String login(SysUser user, HttpServletResponse response) {
         JsonObject result = new JsonObject();
         String userid = "";
@@ -61,8 +64,8 @@ public class LoginController {
                 .signWith(SignatureAlgorithm.HS256, Constant.TOKEN_SECURE).compact();
         result.addProperty("token", jwtToken);
         result.addProperty("userid", userid);
-        redisCache.set(Constant.TOKEN_KEY + userid, jwtToken);
-        redisCache.expire(Constant.TOKEN_KEY + userid, 20 * 60);
+        redisCache.set(jwtToken,userid);
+        redisCache.expire(jwtToken, 20 * 60);
         //添加cookie
         CookieUtil.addCookie(response, "userid", userid, Constant.DEFAULT_COOKIE_PATH, Constant.DEFAULT_COOKIE_MAX_AGE);
         CookieUtil.addCookie(response, "token", jwtToken, Constant.DEFAULT_COOKIE_PATH, Constant.DEFAULT_COOKIE_MAX_AGE);
@@ -77,21 +80,25 @@ public class LoginController {
      * @return
      */
     @ApiOperation(value = "退出登录", response = String.class, notes = "退出登录")
-    @CrossOrigin(origins = "*")
     @PostMapping("login/logout")
-    public void logout(@RequestParam("token") String token, HttpServletRequest request, HttpServletResponse response) {
-        Claims claims = null;
-        String userid = "";
+    public void logout(@RequestParam(value="token",required = false) String token, HttpServletRequest request, HttpServletResponse response) {
+        //退出登录不需要验证token
+        UserInfoVO userInfoVO=null;
         try {
-            claims = Jwts.parser().setSigningKey(Constant.TOKEN_SECURE).parseClaimsJws(token).getBody();
-            userid = claims.get("userid").toString();
+            if(StringUtils.isNotBlank(token)) {
+                redisCache.del(token);
+                //获取用户信息
+                userInfoVO=sysUserService.selectUserByToken(token);
+            }
         } catch (Exception e) {
             //无需处理该异常
-        } finally {
-            redisCache.del(Constant.TOKEN_KEY + userid);
-            //清除cookie
-            CookieUtil.delCookie(request, response, "token");
+            logger.error("退出登录发生异常",e);
         }
-        logger.info("用户" + userid + "退出登录成功！token:" + token);
+        logger.info("用户退出登录成功！token:" + token+"用户信息："+new Gson().toJson(userInfoVO));
+    }
+    @ApiOperation(value = "根据token获取用户信息", response = String.class, notes = "根据token获取用户信息")
+    @GetMapping("info")
+    public UserInfoVO selectUserByToken(@RequestParam("token") String token){
+        return sysUserService.selectUserByToken(token);
     }
 }
