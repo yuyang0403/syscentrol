@@ -35,12 +35,12 @@ public class SysUserManagerController {
      *
      * @return
      */
-    @RequestMapping(value = "getMenuList/{userid}")
-    @CrossOrigin(origins = "*")
-    public String getMenuList(@PathVariable("userid") Long userid) {
+    @ApiOperation(value="按照token获取用户菜单",notes="按照用户ID获取用户信息")
+    @RequestMapping(value = "findRouterList",method = RequestMethod.POST)
+    public String getMenuList(@RequestHeader("token") String token) {
         String result = null;
         try {
-            result = sysUserService.selectMenuListByUserId(userid);
+            result = sysUserService.findRouterList(token);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
@@ -52,7 +52,7 @@ public class SysUserManagerController {
      *
      * @return
      */
-    @RequestMapping(value = "getUserList")
+    @RequestMapping(value = "getUserList",method = RequestMethod.POST)
     public String getUserList(SysUser user) {
         String result = null;
         try {

@@ -242,7 +242,12 @@
         LEFT JOIN sys_role role ON role.id=srm.role_id
         LEFT JOIN sys_user_role sur ON sur.role_id=role.id
         LEFT JOIN sys_user user ON user.id=sur.user_id
-        WHERE user.status=1 AND menu.status=1 AND role.status=1 AND user.id=#{userid}
+        <where>
+            user.status=1
+            AND menu.status=1
+            AND role.status=1
+            AND user.id=#{userid}
+        </where>
     </select>
     <select id="selectByPage" resultMap="BaseResultMap">
         <if test="loginName != null">

@@ -4,8 +4,10 @@
     <resultMap id="BaseResultMap" type="com.yuyang.user.model.SysMenu">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
         <result column="title" jdbcType="VARCHAR" property="title"/>
-        <result column="url" jdbcType="VARCHAR" property="url"/>
+        <result column="component" jdbcType="VARCHAR" property="component"/>
+        <result column="path" jdbcType="VARCHAR" property="path"/>
         <result column="icon" jdbcType="VARCHAR" property="icon"/>
         <result column="order_index" jdbcType="INTEGER" property="orderIndex"/>
         <result column="description" jdbcType="VARCHAR" property="description"/>
@@ -17,7 +19,7 @@
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
     </resultMap>
     <sql id="Base_Column_List">
-        id, parent_id, title, url, icon, order_index, description, status, created_time,
+        id, parent_id, component, `name`, title, path, icon, order_index, description, status, created_time,
         update_time, created_by, update_by, remark
     </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -31,13 +33,13 @@
         where id = #{id,jdbcType=BIGINT}
     </delete>
     <insert id="insert" parameterType="com.yuyang.user.model.SysMenu">
-        insert into sys_menu (id, parent_id, title,
-        url, icon, order_index,
+        insert into sys_menu (id, parent_id, `name`, title,component,
+        path, icon, order_index,
         description, status, created_time,
         update_time, created_by, update_by,
         remark)
-        values (#{id,jdbcType=BIGINT}, #{parentId,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR},
-        #{url,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, #{orderIndex,jdbcType=INTEGER},
+        values (#{id,jdbcType=BIGINT}, #{parentId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, #{component,jdbcType=VARCHAR},
+        #{path,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, #{orderIndex,jdbcType=INTEGER},
         #{description,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{createdTime,jdbcType=TIMESTAMP},
         #{updateTime,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=VARCHAR}, #{updateBy,jdbcType=VARCHAR},
         #{remark,jdbcType=VARCHAR})
@@ -51,11 +53,17 @@
             <if test="parentId != null">
                 parent_id,
             </if>
+            <if test="name != null">
+                `name`,
+            </if>
             <if test="title != null">
                 title,
             </if>
-            <if test="url != null">
-                url,
+            <if test="component != null">
+                component,
+            </if>
+            <if test="path != null">
+                path,
             </if>
             <if test="icon != null">
                 icon,
@@ -92,11 +100,17 @@
             <if test="parentId != null">
                 #{parentId,jdbcType=BIGINT},
             </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
             <if test="title != null">
                 #{title,jdbcType=VARCHAR},
             </if>
-            <if test="url != null">
-                #{url,jdbcType=VARCHAR},
+            <if test="component != null">
+                #{component,jdbcType=VARCHAR},
+            </if>
+            <if test="path != null">
+                #{path,jdbcType=VARCHAR},
             </if>
             <if test="icon != null">
                 #{icon,jdbcType=VARCHAR},
@@ -133,11 +147,17 @@
             <if test="parentId != null">
                 parent_id = #{parentId,jdbcType=BIGINT},
             </if>
+            <if test="name != null">
+                `name` = #{name,jdbcType=VARCHAR},
+            </if>
             <if test="title != null">
                 title = #{title,jdbcType=VARCHAR},
             </if>
-            <if test="url != null">
-                url = #{url,jdbcType=VARCHAR},
+            <if test="component != null">
+                component = #{component,jdbcType=VARCHAR},
+            </if>
+            <if test="path != null">
+                path = #{path,jdbcType=VARCHAR},
             </if>
             <if test="icon != null">
                 icon = #{icon,jdbcType=VARCHAR},
@@ -172,8 +192,10 @@
     <update id="updateByPrimaryKey" parameterType="com.yuyang.user.model.SysMenu">
         update sys_menu
         set parent_id = #{parentId,jdbcType=BIGINT},
+        `name` = #{name,jdbcType=VARCHAR},
         title = #{title,jdbcType=VARCHAR},
-        url = #{url,jdbcType=VARCHAR},
+        component = #{component,jdbcType=VARCHAR},
+        path = #{path,jdbcType=VARCHAR},
         icon = #{icon,jdbcType=VARCHAR},
         order_index = #{orderIndex,jdbcType=INTEGER},
         description = #{description,jdbcType=VARCHAR},

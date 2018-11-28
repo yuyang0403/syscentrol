@@ -56,19 +56,26 @@ public class SysUserServiceImpl implements SysUserService {
     /**
      * 获取菜单
      *
-     * @param userid
+     * @param token
      * @return
      */
     @Override
-    public String selectMenuListByUserId(Long userid) {
+    public String findRouterList(String token) {
+        Long userid=null;
+        if(redisCache.exists(token)){
+            userid=Long.parseLong(redisCache.get(token));
+        }
         List<SysMenu> menuList = sysUserMapper.selectMenuListByUserId(userid);
         //最上级菜单
         JsonArray parentTree = new JsonArray();
         for (SysMenu menuEntity : menuList) {
             if (menuEntity.getParentId() == 0) {
                 JsonObject menuJson = gson.toJsonTree(menuEntity).getAsJsonObject();
-                menuJson.addProperty("text", menuEntity.getTitle());
-                menuJson.addProperty("iconCls", menuEntity.getIcon());
+                menuJson.addProperty("path", menuEntity.getPath());
+                menuJson.addProperty("component", menuEntity.getComponent());
+                menuJson.addProperty("name", menuEntity.getName());
+                menuJson.addProperty("title", menuEntity.getTitle());
+                menuJson.addProperty("icon", menuEntity.getIcon());
                 menuJson.add("children", getChildren(menuList, menuEntity));
                 parentTree.add(menuJson);
             }
@@ -88,8 +95,11 @@ public class SysUserServiceImpl implements SysUserService {
         for (SysMenu menuEntity : list) {
             if (menuEntity.getParentId().longValue() == current.getId().longValue()) {
                 JsonObject menuJson = gson.toJsonTree(menuEntity).getAsJsonObject();
-                menuJson.addProperty("text", menuEntity.getTitle());
-                menuJson.addProperty("iconCls", menuEntity.getIcon());
+                menuJson.addProperty("path", menuEntity.getPath());
+                menuJson.addProperty("component", menuEntity.getComponent());
+                menuJson.addProperty("name", menuEntity.getName());
+                menuJson.addProperty("title", menuEntity.getTitle());
+                menuJson.addProperty("icon", menuEntity.getIcon());
                 menuJson.add("children", getChildren(list, menuEntity));
                 childrenArray.add(menuJson);
             }

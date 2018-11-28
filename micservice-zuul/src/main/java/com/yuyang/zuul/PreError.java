@@ -35,7 +35,7 @@ public class PreError extends ZuulFilter {
             logger.info("请求的地址是登录/登出,不进行token校验");
             return null;
         }
-        String token = request.getParameter("token");
+        String token = request.getHeader("token");
         if (StringUtils.isEmpty(token)) {
             //没有token参数，重新登录
             ctx.setSendZuulResponse(false);

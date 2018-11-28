@@ -23,6 +23,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
+import java.util.Enumeration;
 
 /**
  * @author yuyang
@@ -81,7 +82,7 @@ public class LoginController {
      */
     @ApiOperation(value = "退出登录", response = String.class, notes = "退出登录")
     @PostMapping("login/logout")
-    public void logout(@RequestParam(value="token",required = false) String token, HttpServletRequest request, HttpServletResponse response) {
+    public void logout(@RequestHeader(value="token",required = false) String token, HttpServletRequest request, HttpServletResponse response) {
         //退出登录不需要验证token
         UserInfoVO userInfoVO=null;
         try {
@@ -98,7 +99,7 @@ public class LoginController {
     }
     @ApiOperation(value = "根据token获取用户信息", response = String.class, notes = "根据token获取用户信息")
     @GetMapping("info")
-    public UserInfoVO selectUserByToken(@RequestParam("token") String token){
+    public UserInfoVO selectUserByToken(@RequestHeader("token") String token){
         return sysUserService.selectUserByToken(token);
     }
 }

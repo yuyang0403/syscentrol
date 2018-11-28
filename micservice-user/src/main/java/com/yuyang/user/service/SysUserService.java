@@ -22,10 +22,10 @@ public interface SysUserService {
     /**
      * 查询用户的菜单
      *
-     * @param userid
+     * @param token
      * @return
      */
-    String selectMenuListByUserId(Long userid);
+    String findRouterList(String token);
 
     /**
      * 分页查询
