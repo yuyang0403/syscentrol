@@ -22,12 +22,12 @@ public class MicserviceZuul {
     }
 
     @Bean
-    public PreError getPreError() {
-        return new PreError();
+    public PreZuulFilter getPreError() {
+        return new PreZuulFilter();
     }
 
     @Bean
-    public PostError getPostError() {
-        return new PostError();
+    public PostZuulFilter getPostError() {
+        return new PostZuulFilter();
     }
 }

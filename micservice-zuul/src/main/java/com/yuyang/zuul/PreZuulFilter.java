@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class PreError extends ZuulFilter {
+public class PreZuulFilter extends ZuulFilter {
     Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     TokenService tokenService;
@@ -29,6 +29,8 @@ public class PreError extends ZuulFilter {
         RequestContext ctx = RequestContext.getCurrentContext();
         HttpServletRequest request = ctx.getRequest();
         HttpServletResponse response = ctx.getResponse();
+        response.setCharacterEncoding("utf-8");
+        response.setContentType("text/html;charset=utf-8");
         //user-login/login
         logger.info("请求地址：" + request.getRequestURI());
         if (request.getRequestURI().contains("/user-login/login")) {
@@ -36,19 +38,17 @@ public class PreError extends ZuulFilter {
             return null;
         }
         String token = request.getHeader("token");
-        if (StringUtils.isEmpty(token)) {
+        if (StringUtils.isEmpty(token)||token.equals("null")) {
             //没有token参数，重新登录
             ctx.setSendZuulResponse(false);
-            ctx.setResponseStatusCode(401);
-            //ctx.setResponseBody("{\"error\":\"1\",\"message\":\"客户端缺少token参数\"}");
+            ctx.setResponseStatusCode(100001);
             ctx.set("isSuccess", false);
             logger.error(ctx.getResponseBody());
             return null;
         }
         if (!tokenService.checkToken(token)) {
             ctx.setSendZuulResponse(false);
-            ctx.setResponseStatusCode(401);
-            //ctx.setResponseBody("{\"error\":\"1\",\"message\":\"用户身份过期！请重新登录\"}");
+            ctx.setResponseStatusCode(100002);
             ctx.set("isSuccess", false);
             logger.error(ctx.getResponseBody());
             return null;
