@@ -18,4 +18,5 @@ public class UserInfoVO {
     private String  avatar;
     private String desc;
     private List<RoleInfoVO> roleList=new ArrayList<>();
+    private List<String> routers=new ArrayList<>();
 }

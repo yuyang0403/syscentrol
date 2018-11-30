@@ -151,6 +151,13 @@ public class SysUserServiceImpl implements SysUserService {
                     vo.getRoleList().add(roleInfoVO);
                 }
             }
+            //放入该用户拥有的所有菜单
+            List<SysMenu> menuList = sysUserMapper.selectMenuListByUserId(userid);
+            if(!CollectionUtils.isEmpty(menuList)){
+                for (SysMenu sysMenu : menuList) {
+                    vo.getRouters().add(sysMenu.getName());
+                }
+            }
         }
         return vo;
     }
