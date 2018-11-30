@@ -1,5 +1,6 @@
 package com.yuyang.zuul;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.JsonObject;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
@@ -24,22 +25,24 @@ public class PostZuulFilter extends ZuulFilter {
         System.out.println("进入了后置过滤器");
         RequestContext ctx = RequestContext.getCurrentContext();
         //获取响应流
-//        try {
-//            InputStream stream = ctx.getResponseDataStream();
-//            if(stream!=null) {
-//                String resContent = IOUtils.toString(stream, StandardCharsets.UTF_8);
-//
-//                JsonObject jsonObject=(JsonObject)Constant.GSON.toJsonTree(resContent);
-//                System.out.println(jsonObject.get("error"));
-//                if(jsonObject!=null){
-//                    ctx.setSendZuulResponse(false);
-//                    //ctx.setResponseStatusCode();
-//                    ctx.set("isSuccess", false);
-//                }
-//            }
-//        } catch (Exception e) {
-//            LOGGER.error("转换响应参数出错",e);
-//        }
+        try {
+            InputStream stream = ctx.getResponseDataStream();
+            String resContent=null;
+            if(stream!=null) {
+                resContent= IOUtils.toString(stream, StandardCharsets.UTF_8);
+                LOGGER.info("响应数据："+resContent);
+                JSONObject jsonObject=JSONObject.parseObject(resContent);
+                if(jsonObject!=null&&jsonObject.containsKey("errorCode")&&!jsonObject.getString("errorCode").equals("0")){
+                    ctx.setSendZuulResponse(false);
+                    ctx.setResponseStatusCode(jsonObject.getInteger("errorCode"));
+                    ctx.set("isSuccess", false);
+                    LOGGER.info("错误编码："+jsonObject.getInteger("errorCode"));
+                }
+            }
+            ctx.setResponseBody(resContent);
+        } catch (Exception e) {
+            LOGGER.error("转换响应参数出错",e);
+        }
         return null;
     }
 

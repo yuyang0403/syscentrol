@@ -1,5 +1,6 @@
 package com.yuyang.user.controller;
 
+import com.yuyang.common.util.ResponseResult;
 import com.yuyang.user.model.SysUser;
 import com.yuyang.user.service.SysUserService;
 import io.swagger.annotations.Api;
@@ -37,14 +38,16 @@ public class SysUserManagerController {
      */
     @ApiOperation(value="按照token获取用户菜单",notes="按照用户ID获取用户信息")
     @RequestMapping(value = "findRouterList",method = RequestMethod.POST)
-    public String getMenuList(@RequestHeader("token") String token) {
-        String result = null;
+    public ResponseResult<String> getMenuList(@RequestHeader("token") String token) {
+        ResponseResult<String> responseResult=new ResponseResult<>();
         try {
-            result = sysUserService.findRouterList(token);
+            responseResult.setData(sysUserService.findRouterList(token));
         } catch (Exception e) {
+            responseResult.setErrorCode(500);
+            responseResult.setErrorMessage(e.getMessage());
             logger.error(e.getMessage(), e);
         }
-        return result;
+        return responseResult;
     }
 
     /**

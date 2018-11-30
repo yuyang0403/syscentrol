@@ -7,6 +7,7 @@ import com.yuyang.common.cache.RedisCache;
 import com.yuyang.common.constant.Constant;
 import com.yuyang.common.user.vo.UserInfoVO;
 import com.yuyang.common.util.CookieUtil;
+import com.yuyang.common.util.ResponseResult;
 import com.yuyang.user.model.SysUser;
 import com.yuyang.user.service.SysUserService;
 import io.jsonwebtoken.Claims;
@@ -41,37 +42,31 @@ public class LoginController {
     RedisCache redisCache;
     @ApiOperation(value = "登录", response = String.class, notes = "登录")
     @RequestMapping(value = "login", method = RequestMethod.POST)
-    public String login(SysUser user, HttpServletResponse response) {
+    public ResponseResult<String> login(SysUser user) {
+        ResponseResult<String> responseResult=new ResponseResult<>();
         JsonObject result = new JsonObject();
-        String userid = "";
         try {
             SysUser loginUser = sysUserService.selectSysUserByNameAndPwd(user);
             result.addProperty("error", "0");
             result.add("token", new Gson().toJsonTree(loginUser));
             if (loginUser == null) {
-                result.addProperty("error", "1");
-                result.addProperty("message", "登录失败，用户名或者密码有误！");
+                responseResult.setErrorCode(100003);
+                responseResult.setErrorMessage("用户名或者密码验证失败");
                 logger.info(result.toString());
-                return result.toString();
+            }else{
+                String jwtToken = Jwts.builder().setSubject(loginUser.getId().toString()).setIssuedAt(new Date()).claim("userid", loginUser.getId())
+                        .signWith(SignatureAlgorithm.HS256, Constant.TOKEN_SECURE).compact();
+                responseResult.setData(jwtToken);
+                redisCache.set(jwtToken,loginUser.getId().toString());
+                redisCache.expire(jwtToken, 30 * 60);
+                logger.info("用户" + loginUser.getId() + "登录成功！token:" + jwtToken);
             }
-            userid = loginUser.getId().toString();
         } catch (Exception e) {
-            result.addProperty("error", "1");
-            result.addProperty("message", e.getMessage());
+            responseResult.setErrorCode(500);
+            responseResult.setErrorMessage(e.getMessage());
             logger.error(result.toString(), e);
-            return result.toString();
         }
-        String jwtToken = Jwts.builder().setSubject(userid).setIssuedAt(new Date()).claim("userid", userid)
-                .signWith(SignatureAlgorithm.HS256, Constant.TOKEN_SECURE).compact();
-        result.addProperty("token", jwtToken);
-        result.addProperty("userid", userid);
-        redisCache.set(jwtToken,userid);
-        redisCache.expire(jwtToken, 20 * 60);
-        //添加cookie
-        CookieUtil.addCookie(response, "userid", userid, Constant.DEFAULT_COOKIE_PATH, Constant.DEFAULT_COOKIE_MAX_AGE);
-        CookieUtil.addCookie(response, "token", jwtToken, Constant.DEFAULT_COOKIE_PATH, Constant.DEFAULT_COOKIE_MAX_AGE);
-        logger.info("用户" + userid + "登录成功！token:" + jwtToken);
-        return result.toString();
+        return responseResult;
     }
 
     /**
@@ -97,9 +92,18 @@ public class LoginController {
         }
         logger.info("用户退出登录成功！token:" + token+"用户信息："+new Gson().toJson(userInfoVO));
     }
-    @ApiOperation(value = "根据token获取用户信息", response = String.class, notes = "根据token获取用户信息")
+    @ApiOperation(value = "根据token获取用户信息", response = UserInfoVO.class, notes = "根据token获取用户信息")
     @GetMapping("info")
-    public UserInfoVO selectUserByToken(@RequestHeader("token") String token){
-        return sysUserService.selectUserByToken(token);
+    public ResponseResult<UserInfoVO>  selectUserByToken(@RequestHeader("token") String token){
+        ResponseResult<UserInfoVO> responseResult=new ResponseResult<>();
+        try {
+            UserInfoVO vo=sysUserService.selectUserByToken(token);
+            responseResult.setData(vo);
+        } catch (Exception e) {
+            responseResult.setErrorCode(500);
+            responseResult.setErrorMessage(e.getMessage());
+            logger.error("根据token获取用户信息出现异常",e);
+        }
+        return responseResult;
     }
 }
