@@ -167,4 +167,11 @@
         LEFT JOIN sys_user user ON user.id=sur.user_id
         WHERE `user`.status=1 AND role.status=1 AND `user`.id=#{userid}
     </select>
+
+    <select id="selectRolesList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_role
+        where status=1
+    </select>
 </mapper>

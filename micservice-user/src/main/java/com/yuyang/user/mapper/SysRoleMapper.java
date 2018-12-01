@@ -24,4 +24,10 @@ public interface SysRoleMapper {
      * @return
      */
     List<SysRole> selectRolesByUserId(@Param("userid")Long userid);
+
+    /**
+     * 获取有效的角色列表
+     * @return
+     */
+    List<SysRole> selectRolesList();
 }

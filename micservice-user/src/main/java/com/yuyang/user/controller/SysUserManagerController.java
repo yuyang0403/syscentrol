@@ -16,7 +16,7 @@ import javax.annotation.Resource;
  * @create 2018/6/14 14:11
  * @desc 后台管理的controller
  **/
-//@Api("用户后台管理")
+@Api("用户后台管理")
 @RestController
 @RequestMapping("user/manager")
 @CrossOrigin(origins = "*")
@@ -55,14 +55,17 @@ public class SysUserManagerController {
      *
      * @return
      */
-    @RequestMapping(value = "getUserList",method = RequestMethod.POST)
-    public String getUserList(SysUser user) {
-        String result = null;
+    @ApiOperation(value="用户分页",notes="用户分页",response = String.class)
+    @RequestMapping(value = "findUserList",method = RequestMethod.POST)
+    public ResponseResult<String> getUserList(SysUser user) {
+        ResponseResult<String> responseResult=new ResponseResult<>();
         try {
-            result = sysUserService.selectByPage(user);
+            responseResult.setData(sysUserService.selectByPage(user));
         } catch (Exception e) {
+            responseResult.setErrorCode(500);
+            responseResult.setErrorMessage(e.getMessage());
             logger.error(e.getMessage(), e);
         }
-        return result;
+        return responseResult;
     }
 }
