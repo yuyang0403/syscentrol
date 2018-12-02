@@ -9,5 +9,7 @@ zuul:
     sys-user:
       path: /user-login/**
       serviceId: micservice-user
-  sensitive-headers:
+ribbon:
+  ReadTimeout: 60000  # 单位毫秒数
+  SocketTimeout: 60000
 #logging.level.ROOT: DEBUG
