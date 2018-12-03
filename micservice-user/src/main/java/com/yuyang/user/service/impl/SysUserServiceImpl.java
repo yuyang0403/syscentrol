@@ -6,6 +6,7 @@ import com.github.pagehelper.PageInfo;
 import com.google.gson.*;
 import com.netflix.discovery.converters.Auto;
 import com.yuyang.common.cache.RedisCache;
+import com.yuyang.common.user.condition.CreateUserCondition;
 import com.yuyang.common.user.vo.RoleInfoVO;
 import com.yuyang.common.user.vo.UserInfoVO;
 import com.yuyang.user.mapper.SysRoleMapper;
@@ -14,12 +15,15 @@ import com.yuyang.user.model.SysMenu;
 import com.yuyang.user.model.SysRole;
 import com.yuyang.user.model.SysUser;
 import com.yuyang.user.service.SysUserService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -160,5 +164,35 @@ public class SysUserServiceImpl implements SysUserService {
             }
         }
         return vo;
+    }
+
+    /**
+     * 创建用户
+     * @param condition
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void createUser(CreateUserCondition condition,String token) {
+        UserInfoVO userInfoVO=selectUserByToken(token);
+        //数据校验 省略
+        SysUser sysUser=new SysUser();
+        sysUser.setAvatar(condition.getAvatar());
+        sysUser.setCreateBy(userInfoVO.getLoginName());
+        sysUser.setCreateTime(new Date());
+        sysUser.setDesc(condition.getDesc());
+        sysUser.setEmail(condition.getEmail());
+        sysUser.setLoginName(condition.getLoginName());
+        sysUser.setNickName(condition.getNickName());
+        sysUser.setPassword(StringUtils.isBlank(condition.getPassword())?condition.getLoginName():condition.getPassword());
+        sysUser.setPhone(condition.getPhone());
+        sysUser.setStatus(condition.getStatus());
+        sysUser.setTruename(condition.getTruename());
+        sysUser.setUserType(1);
+        sysUserMapper.insertSelective(sysUser);
+        for (String code : condition.getRoleList()) {
+            SysRole role=sysRoleMapper.selectRoleByCode(code);
+            //插入中间表
+            sysRoleMapper.insertUserRole(sysUser.getId(),role.getId());
+        }
     }
 }

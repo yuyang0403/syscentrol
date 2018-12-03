@@ -1,5 +1,6 @@
 package com.yuyang.user.controller;
 
+import com.yuyang.common.user.condition.CreateUserCondition;
 import com.yuyang.common.util.ResponseResult;
 import com.yuyang.user.model.SysUser;
 import com.yuyang.user.service.SysUserService;
@@ -31,11 +32,6 @@ public class SysUserManagerController {
         return sysUserService.selectSysUserById(id);
     }
 
-    /**
-     * 获取菜单tree
-     *
-     * @return
-     */
     @ApiOperation(value="按照token获取用户菜单",notes="按照用户ID获取用户信息")
     @RequestMapping(value = "findRouterList",method = RequestMethod.POST)
     public ResponseResult<String> getMenuList(@RequestHeader("token") String token) {
@@ -50,17 +46,26 @@ public class SysUserManagerController {
         return responseResult;
     }
 
-    /**
-     * 用户分页
-     *
-     * @return
-     */
     @ApiOperation(value="用户分页",notes="用户分页",response = String.class)
     @RequestMapping(value = "findUserList",method = RequestMethod.POST)
     public ResponseResult<String> getUserList(SysUser user) {
         ResponseResult<String> responseResult=new ResponseResult<>();
         try {
             responseResult.setData(sysUserService.selectByPage(user));
+        } catch (Exception e) {
+            responseResult.setErrorCode(500);
+            responseResult.setErrorMessage(e.getMessage());
+            logger.error(e.getMessage(), e);
+        }
+        return responseResult;
+    }
+
+    @ApiOperation(value="创建用户",notes="创建用户",response = String.class)
+    @RequestMapping(value = "createUser",method = RequestMethod.POST)
+    public ResponseResult<String> createUser(@RequestBody CreateUserCondition condition,@RequestHeader("token") String token){
+        ResponseResult<String> responseResult=new ResponseResult<>();
+        try {
+            sysUserService.createUser(condition,token);
         } catch (Exception e) {
             responseResult.setErrorCode(500);
             responseResult.setErrorMessage(e.getMessage());

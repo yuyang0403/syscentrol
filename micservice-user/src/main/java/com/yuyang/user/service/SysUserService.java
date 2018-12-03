@@ -1,5 +1,6 @@
 package com.yuyang.user.service;
 
+import com.yuyang.common.user.condition.CreateUserCondition;
 import com.yuyang.common.user.vo.UserInfoVO;
 import com.yuyang.user.model.SysUser;
 
@@ -41,4 +42,10 @@ public interface SysUserService {
      * @return
      */
     UserInfoVO selectUserByToken(String token);
+
+    /**
+     * 创建用户
+     * @param condition
+     */
+    void createUser(CreateUserCondition condition,String token);
 }

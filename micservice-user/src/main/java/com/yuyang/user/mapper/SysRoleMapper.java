@@ -30,4 +30,19 @@ public interface SysRoleMapper {
      * @return
      */
     List<SysRole> selectRolesList();
+
+    /**
+     * 按照code获取对象
+     * @param code
+     * @return
+     */
+    SysRole selectRoleByCode(@Param("code") String code);
+
+    /**
+     * 插入中间表
+     * @param userId
+     * @param roleId
+     * @return
+     */
+    int insertUserRole(@Param("userId")Long userId,@Param("roleId") Long roleId);
 }
