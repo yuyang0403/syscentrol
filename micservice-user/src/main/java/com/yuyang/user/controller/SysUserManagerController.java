@@ -8,6 +8,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -61,8 +62,8 @@ public class SysUserManagerController {
     }
 
     @ApiOperation(value="创建用户",notes="创建用户",response = String.class)
-    @RequestMapping(value = "createUser",method = RequestMethod.POST)
-    public ResponseResult<String> createUser(@RequestBody CreateUserCondition condition,@RequestHeader("token") String token){
+    @RequestMapping(value = "createUser",method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseResult<String> createUser(@ModelAttribute CreateUserCondition condition,@RequestHeader("token") String token){
         ResponseResult<String> responseResult=new ResponseResult<>();
         try {
             sysUserService.createUser(condition,token);
