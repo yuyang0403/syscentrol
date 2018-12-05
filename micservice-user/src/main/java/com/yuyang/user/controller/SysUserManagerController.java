@@ -49,7 +49,7 @@ public class SysUserManagerController {
 
     @ApiOperation(value="用户分页",notes="用户分页",response = String.class)
     @RequestMapping(value = "findUserList",method = RequestMethod.POST)
-    public ResponseResult<String> getUserList(SysUser user) {
+    public ResponseResult<String> getUserList(@ModelAttribute SysUser user) {
         ResponseResult<String> responseResult=new ResponseResult<>();
         try {
             responseResult.setData(sysUserService.selectByPage(user));
@@ -61,12 +61,12 @@ public class SysUserManagerController {
         return responseResult;
     }
 
-    @ApiOperation(value="创建用户",notes="创建用户",response = String.class)
-    @RequestMapping(value = "createUser",method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseResult<String> createUser(@ModelAttribute CreateUserCondition condition,@RequestHeader("token") String token){
+    @ApiOperation(value="创建或修改用户",notes="创建或修改用户",response = String.class)
+    @RequestMapping(value = "createOrUpdateUser",method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseResult<String> createOrUpdateUser(@ModelAttribute CreateUserCondition condition,@RequestHeader("token") String token){
         ResponseResult<String> responseResult=new ResponseResult<>();
         try {
-            sysUserService.createUser(condition,token);
+            sysUserService.createOrUpdateUser(condition,token);
         } catch (Exception e) {
             responseResult.setErrorCode(500);
             responseResult.setErrorMessage(e.getMessage());

@@ -12,6 +12,8 @@ import java.util.List;
  **/
 @Data
 public class CreateUserCondition {
+    @ApiModelProperty("ID")
+    private Long id;
     @ApiModelProperty("状态")
     private Integer status;
     @ApiModelProperty("登录名")

@@ -47,5 +47,5 @@ public interface SysUserService {
      * 创建用户
      * @param condition
      */
-    void createUser(CreateUserCondition condition,String token);
+    void createOrUpdateUser(CreateUserCondition condition,String token);
 }

@@ -18,7 +18,7 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
-        <result column="update_by" jdbcType="TIMESTAMP" property="updateBy"/>
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
         <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
         <result column="desc" jdbcType="VARCHAR" property="desc"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
@@ -158,7 +158,7 @@
                 #{updateTime,jdbcType=TIMESTAMP},
             </if>
             <if test="updateBy != null">
-                #{updateBy,jdbcType=TIMESTAMP},
+                #{updateBy},
             </if>
             <if test="avatar != null">
                 #{avatar},
@@ -220,7 +220,7 @@
                 update_time = #{updateTime,jdbcType=TIMESTAMP},
             </if>
             <if test="updateBy != null">
-                update_by = #{updateBy,jdbcType=TIMESTAMP},
+                update_by = #{updateBy},
             </if>
             <if test="avatar != null">
                 avatar = #{avatar},
@@ -253,12 +253,21 @@
         <if test="loginName != null">
             <bind name="pattern1" value="'%' + _parameter.loginName + '%'"/>
         </if>
+        <if test="phone != null">
+            <bind name="pattern2" value="'%' + _parameter.phone + '%'"/>
+        </if>
         select
         <include refid="Base_Column_List"/>
         from sys_user
         <where>
             <if test="loginName != null">
-                login_name like #{pattern1}
+                and login_name like #{pattern1}
+            </if>
+            <if test="phone != null">
+                and phone like #{pattern2}
+            </if>
+            <if test="status != null">
+                and status=#{status}
             </if>
         </where>
         order by create_time desc

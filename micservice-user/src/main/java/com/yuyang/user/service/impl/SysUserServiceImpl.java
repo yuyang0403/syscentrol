@@ -172,13 +172,11 @@ public class SysUserServiceImpl implements SysUserService {
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void createUser(CreateUserCondition condition,String token) {
+    public void createOrUpdateUser(CreateUserCondition condition,String token) {
         UserInfoVO userInfoVO=selectUserByToken(token);
         //数据校验 省略
         SysUser sysUser=new SysUser();
         sysUser.setAvatar(condition.getAvatar());
-        sysUser.setCreateBy(userInfoVO.getLoginName());
-        sysUser.setCreateTime(new Date());
         sysUser.setDesc(condition.getDesc());
         sysUser.setEmail(condition.getEmail());
         sysUser.setLoginName(condition.getLoginName());
@@ -187,12 +185,25 @@ public class SysUserServiceImpl implements SysUserService {
         sysUser.setPhone(condition.getPhone());
         sysUser.setStatus(condition.getStatus());
         sysUser.setTruename(condition.getTruename());
-        sysUser.setUserType(1);
-        sysUserMapper.insertSelective(sysUser);
+
+        if(condition.getId()!=null){
+            //修改
+            sysUser.setUpdateBy(userInfoVO.getLoginName());
+            sysUser.setUpdateTime(new Date());
+            sysUser.setId(condition.getId());
+            sysUserMapper.updateByPrimaryKeySelective(sysUser);
+            //删除中间表数据
+            sysRoleMapper.deleleUserRole(condition.getId());
+        }else {
+            sysUser.setCreateBy(userInfoVO.getLoginName());
+            sysUser.setCreateTime(new Date());
+            sysUser.setUserType(1);
+            sysUserMapper.insertSelective(sysUser);
+        }
         for (String code : condition.getRoleList()) {
-            SysRole role=sysRoleMapper.selectRoleByCode(code);
+            SysRole role = sysRoleMapper.selectRoleByCode(code);
             //插入中间表
-            sysRoleMapper.insertUserRole(sysUser.getId(),role.getId());
+            sysRoleMapper.insertUserRole(sysUser.getId(), role.getId());
         }
     }
 }

@@ -20,19 +20,22 @@ public interface SysRoleMapper {
 
     /**
      * 获取用户角色列表
+     *
      * @param userid
      * @return
      */
-    List<SysRole> selectRolesByUserId(@Param("userid")Long userid);
+    List<SysRole> selectRolesByUserId(@Param("userid") Long userid);
 
     /**
      * 获取有效的角色列表
+     *
      * @return
      */
     List<SysRole> selectRolesList();
 
     /**
      * 按照code获取对象
+     *
      * @param code
      * @return
      */
@@ -40,9 +43,18 @@ public interface SysRoleMapper {
 
     /**
      * 插入中间表
+     *
      * @param userId
      * @param roleId
      * @return
      */
-    int insertUserRole(@Param("userId")Long userId,@Param("roleId") Long roleId);
+    int insertUserRole(@Param("userId") Long userId, @Param("roleId") Long roleId);
+
+    /**
+     * 删除用户中间表数据
+     *
+     * @param userId
+     * @return
+     */
+    int deleleUserRole(@Param("userId") Long userId);
 }

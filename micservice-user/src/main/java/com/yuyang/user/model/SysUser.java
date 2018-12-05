@@ -38,7 +38,7 @@ public class SysUser extends PageModel {
 
     private Date updateTime;
 
-    private Date updateBy;
+    private String updateBy;
 
     private String avatar;
 

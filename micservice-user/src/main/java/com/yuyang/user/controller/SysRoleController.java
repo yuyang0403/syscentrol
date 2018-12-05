@@ -37,4 +37,18 @@ public class SysRoleController {
         }
         return responseResult;
     }
+
+    @ApiOperation(value="获取某个用户角色列表",notes="获取某个用户角色列表",response = SysRole.class)
+    @RequestMapping(value = "findRoleListByUserId",method = RequestMethod.POST)
+    public ResponseResult<List<SysRole>> findRoleListByUserId(@RequestParam("userId") Long userId) {
+        ResponseResult<List<SysRole>> responseResult=new ResponseResult<>();
+        try {
+            responseResult.setData(sysRoleService.selectRoleListByUserId(userId));
+        } catch (Exception e) {
+            responseResult.setErrorCode(500);
+            responseResult.setErrorMessage(e.getMessage());
+            e.printStackTrace();
+        }
+        return responseResult;
+    }
 }

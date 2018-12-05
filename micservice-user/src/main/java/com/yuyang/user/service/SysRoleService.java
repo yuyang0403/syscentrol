@@ -13,4 +13,11 @@ public interface SysRoleService {
      * @return
      */
     List<SysRole> selectRolesList();
+
+    /**
+     * 获取某个用户的所有角色信息
+     * @param userId
+     * @return
+     */
+    List<SysRole> selectRoleListByUserId(Long userId);
 }
