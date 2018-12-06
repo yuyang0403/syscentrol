@@ -1,6 +1,7 @@
 package com.yuyang.user.service;
 
 import com.yuyang.common.user.condition.CreateUserCondition;
+import com.yuyang.common.user.condition.ModifyStatusCondition;
 import com.yuyang.common.user.vo.UserInfoVO;
 import com.yuyang.user.model.SysUser;
 
@@ -48,4 +49,9 @@ public interface SysUserService {
      * @param condition
      */
     void createOrUpdateUser(CreateUserCondition condition,String token);
+
+    /**
+     * 更新用户状态
+     */
+    void updateUserStatus(ModifyStatusCondition condition,String token);
 }

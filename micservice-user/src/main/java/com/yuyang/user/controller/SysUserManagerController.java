@@ -1,6 +1,8 @@
 package com.yuyang.user.controller;
 
+import com.yuyang.common.exception.ParentException;
 import com.yuyang.common.user.condition.CreateUserCondition;
+import com.yuyang.common.user.condition.ModifyStatusCondition;
 import com.yuyang.common.util.ResponseResult;
 import com.yuyang.user.model.SysUser;
 import com.yuyang.user.service.SysUserService;
@@ -67,6 +69,24 @@ public class SysUserManagerController {
         ResponseResult<String> responseResult=new ResponseResult<>();
         try {
             sysUserService.createOrUpdateUser(condition,token);
+        } catch (Exception e) {
+            responseResult.setErrorCode(500);
+            responseResult.setErrorMessage(e.getMessage());
+            logger.error(e.getMessage(), e);
+        }
+        return responseResult;
+    }
+
+    @ApiOperation(value="修改用户状态",notes="修改用户状态",response = String.class)
+    @RequestMapping(value = "modifyStatus",method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseResult<String> modifyStatus(@ModelAttribute ModifyStatusCondition condition, @RequestHeader("token") String token){
+        ResponseResult<String> responseResult=new ResponseResult<>();
+        try {
+            sysUserService.updateUserStatus(condition, token);
+        }catch (ParentException e){
+            responseResult.setErrorCode(e.getErrorCode());
+            responseResult.setErrorMessage(e.getMessage());
+            logger.error(e.getMessage(), e);
         } catch (Exception e) {
             responseResult.setErrorCode(500);
             responseResult.setErrorMessage(e.getMessage());
