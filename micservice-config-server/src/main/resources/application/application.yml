@@ -9,6 +9,7 @@ redis:
   single:
     ip: 39.105.162.72
     port: 6379
+    password: laoyu0403
   expire: 3600
   max-active: 500
   max-idle: 5000

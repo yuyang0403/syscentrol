@@ -1,4 +1,4 @@
-package com.yuyang.zuul.config;
+package com.yuyang.user.config;
 
 import com.yuyang.common.cache.RedisCache;
 import com.yuyang.common.cache.RedisClusterCacheImpl;
@@ -30,6 +30,8 @@ public class RedisConfig {
     @Value("${redis.single.port}")
     private Integer redisPort;
 
+    @Value("${redis.single.password}")
+    private String password;
     /**
      * Redis集群配置
      */
@@ -98,7 +100,7 @@ public class RedisConfig {
         config.setMaxIdle(redisMaxIdle);
         config.setMaxWaitMillis(redisMaxWait);
         config.setTestOnBorrow(redisTestOnBorrow);
-        return new JedisPool(config,redisIp,redisPort,redisTimeout);
+        return new JedisPool(config,redisIp,redisPort,redisTimeout,password);
     }
 
 
