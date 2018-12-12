@@ -1,4 +1,4 @@
-package com.yuyang.user.config;
+package com.yuyang.zuul.config;
 
 import com.yuyang.common.cache.RedisCache;
 import com.yuyang.common.cache.RedisClusterCacheImpl;
