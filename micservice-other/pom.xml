@@ -80,6 +80,11 @@
             <artifactId>jsoup</artifactId>
             <version>1.10.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>3.3.2</version>
+        </dependency>
     </dependencies>
 
 
